@@ -37,15 +37,17 @@ Run the container with the default params (check the Dockerfile and overwrite wh
 
 ```
 $ docker pull --name mesos-influxdb-collector \
-    -e INFLUX_USER=admin \
-    -e INFLUX_PWD=secret \
+    -e INFLUXDB_USER=admin \
+    -e INFLUXDB_PWD=secret \
     -it --rm kpacha/mesos-influxdb-collector
 ```
 
 Since the default value for `INFLUXDB_HOST` is `ìnfluxb`, you can link the collector to the influxdb container, dependeing on your environment.
 
 ```
-$ docker pull -it --rm --name mesos-influxdb-collector --link influxdb kpacha/mesos-influxdb-collector
+$ docker run --name mesos-influxdb-collector \
+    --link influxdb \
+    -it --rm kpacha/mesos-influxdb-collector
 ```
 
 ## Binary version
@@ -82,3 +84,23 @@ Flag | EnvVar
 `l`  | `COLLECTOR_LIFETIME`
 
 The credentials for the influxdb database are accepted just as env_var (`INFLUXDB_USER` & `INFLUXDB_PWD`)
+
+## Testing environment
+
+In order to do a quick test of the collector, you can use one of the available mesos test environments: [playa-mesos](https://github.com/mesosphere/playa-mesos) & [mesoscope](https://github.com/schibsted/mesoscope). The other components can be deployed with public containers. Replace the `$DOCKER_IP` and `$MESOS_HOST` with the correct values. If you are running the mesoscope env, `MESOS_HOST=$DOCKER_IP`. For the playa-mesos option, `MESOS_HOST=10.141.141.10`.
+
+```
+$ docker run --name influxdb -p 8083:8083 -p 8086:8086 \
+    --expose 8090 --expose 8099 \
+    -d tutum/influxdb
+$ docker run --name grafana -p 3000:3000 \
+    -e GF_SERVER_ROOT_URL="http://$DOCKER_IP" \
+    -e GF_SECURITY_ADMIN_PASSWORD=secret \
+    -d grafana/grafana
+$ docker run --name mesos-influxdb-collector \
+    --link influxdb \
+    -e MESOS_HOST=$MESOS_HOST \
+    -it --rm kpacha/mesos-influxdb-collector
+```
+
+The `grafana` folder contains several grafana dashboard definitions. Go to the grafana website (`http://$DOCKER_IP:3000/`) and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.

@@ -1,0 +1,267 @@
+{
+  "id": 3,
+  "title": "Mesos Slaves",
+  "originalTitle": "Mesos Slaves",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": false,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 1,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slaves_active"
+                },
+                {
+                  "func": "mean",
+                  "name": "slaves_inactive"
+                }
+              ],
+              "fill": "0",
+              "groupByTags": [],
+              "measurement": "master.slaves",
+              "query": "SELECT mean(slaves_active) as active, mean(slaves_inactive) as inactive FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval) fill(0)",
+              "rawQuery": true,
+              "tags": []
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "slaves",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ]
+        }
+      ],
+      "title": "Row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": 0,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 2,
+          "leftYAxisLabel": "%",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": true,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "registrations",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slave_registrations"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.slaves",
+              "query": "SELECT mean(slave_registrations) FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            },
+            {
+              "alias": "removals",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slave_removals"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.slaves",
+              "query": "SELECT mean(slave_removals) FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            },
+            {
+              "alias": "reregistrations",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slave_reregistrations"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.slaves",
+              "query": "SELECT mean(slave_reregistrations) FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            },
+            {
+              "alias": "recovery_removals",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "recovery_slave_removals"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.slaves",
+              "query": "SELECT mean(recovery_slave_removals) FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "slave events",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ]
+        }
+      ],
+      "title": "New row"
+    }
+  ],
+  "nav": [
+    {
+      "collapse": false,
+      "enable": true,
+      "notice": false,
+      "now": true,
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "type": "timepicker"
+    }
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "30s",
+  "schemaVersion": 6,
+  "version": 1,
+  "links": []
+}

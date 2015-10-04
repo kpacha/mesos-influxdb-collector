@@ -1,0 +1,806 @@
+{
+  "id": 1,
+  "title": "Mesos",
+  "originalTitle": "Mesos",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": false,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "150px",
+      "panels": [
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "format": "none",
+          "id": 3,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "elected"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(elected) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            }
+          ],
+          "thresholds": "",
+          "title": "Master Elected",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "format": "s",
+          "id": 4,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "uptime_secs"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(uptime_secs) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            }
+          ],
+          "thresholds": "",
+          "title": "Uptime",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "format": "none",
+          "hideTimeOverride": true,
+          "id": 6,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "active"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.frameworks",
+              "query": "SELECT mean(active) FROM \"master.frameworks\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": false,
+              "tags": []
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": "10s",
+          "title": "Frameworks",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "format": "none",
+          "id": 5,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "outstanding_offers"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(outstanding_offers) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            }
+          ],
+          "thresholds": "",
+          "title": "Outstanding Offers",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "format": "none",
+          "id": 7,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slaves_active"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.slaves",
+              "query": "SELECT mean(slaves_active) FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            }
+          ],
+          "thresholds": "",
+          "title": "Slaves",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "timeFrom": "10s"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "format": "none",
+          "id": 8,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "running"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.tasks",
+              "query": "SELECT mean(running) FROM \"master.tasks\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            }
+          ],
+          "thresholds": "",
+          "title": "Tasks",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "timeFrom": "10s"
+        }
+      ],
+      "showTitle": false,
+      "title": "New row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "cacheTimeout": null,
+          "colorBackground": true,
+          "colorValue": false,
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
+          "editable": true,
+          "error": false,
+          "format": "percent",
+          "id": 12,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": true,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": true
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "percent"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "cpu",
+              "query": "SELECT mean(percent) * 100 FROM \"cpu\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": true,
+              "tags": []
+            }
+          ],
+          "thresholds": "0,70,85",
+          "title": "CPU",
+          "transparent": false,
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": true,
+          "colorValue": false,
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
+          "editable": true,
+          "error": false,
+          "format": "percent",
+          "id": 13,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": true,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": true
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "percent"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "cpu",
+              "query": "SELECT mean(percent) * 100 FROM \"mem\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": true,
+              "tags": []
+            }
+          ],
+          "thresholds": "0,70,90",
+          "title": "MEM",
+          "transparent": false,
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "",
+              "value": ""
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": true,
+          "colorValue": false,
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
+          "editable": true,
+          "error": false,
+          "format": "percent",
+          "id": 14,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": true,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": true
+          },
+          "targets": [
+            {
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "percent"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "cpu",
+              "query": "SELECT mean(percent) * 100 FROM \"disk\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": true,
+              "tags": []
+            }
+          ],
+          "thresholds": "0,60,80",
+          "title": "DISK",
+          "transparent": false,
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        }
+      ],
+      "title": "New row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 2,
+          "leftYAxisLabel": "%",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": true,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "framework_to_executor",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "valid_framework_to_executor_messages"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(valid_framework_to_executor_messages) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": []
+            },
+            {
+              "alias": "status_update_ack",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "valid_status_update_acknowledgements"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(valid_status_update_acknowledgements) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            },
+            {
+              "alias": "status_update",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "valid_status_updates"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(valid_status_updates) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "valid messages",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "influxdb",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": 0,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 1,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "invalid_framework_to_executor_messages",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "invalid_framework_to_executor_messages"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(invalid_framework_to_executor_messages) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": false,
+              "tags": []
+            },
+            {
+              "alias": "invalid_status_update_ack",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "invalid_status_update_acknowledgements"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(invalid_status_update_acknowledgements) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            },
+            {
+              "alias": "invalid_status_update",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "invalid_status_updates"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "master.global",
+              "query": "SELECT mean(invalid_status_updates) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "invalid messages",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ]
+        }
+      ],
+      "title": "Row"
+    }
+  ],
+  "nav": [
+    {
+      "collapse": false,
+      "enable": true,
+      "notice": false,
+      "now": true,
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "type": "timepicker"
+    }
+  ],
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "10s",
+  "schemaVersion": 6,
+  "version": 6,
+  "links": []
+}
