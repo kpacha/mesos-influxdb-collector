@@ -3,6 +3,8 @@ mesos-influxdb-collector
 
 Lightweight mesos stats collector for influxdb
 
+Since this collector is intended to be deployed as a [marathon](https://mesosphere.github.io/marathon) app, it comes with a *lifetime* param. This defines how long the collector will run until it dies, so marathon will re-launch it, allowing easy allocation optimizations. Check the [marathon/](https://github.com/kpacha/mesos-influxdb-collector/tree/master/marathon) folder for more details on how to launch it.
+
 # Installing
 
 Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/mesos-influxdb-collector). Just pull the latest image available with:
@@ -103,4 +105,4 @@ $ docker run --name mesos-influxdb-collector \
     -it --rm kpacha/mesos-influxdb-collector
 ```
 
-The `grafana` folder contains several grafana dashboard definitions. Go to the grafana website (`http://$DOCKER_IP:3000/`) and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
+The `grafana` folder contains several grafana dashboard definitions. Go to the grafana website (`http://$DOCKER_IP:3000/) and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
