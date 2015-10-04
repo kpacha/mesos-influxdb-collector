@@ -15,7 +15,7 @@ Alternatively, if you have Go installed:
 
 ```
 $ go get github.com/kpacha/mesos-influxdb-collector
-``
+```
 
 # Running
 
