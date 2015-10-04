@@ -5,18 +5,53 @@ Lightweight mesos stats collector for influxdb
 
 # Installing
 
-Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/mesos-influxdb-collector).
+Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/mesos-influxdb-collector). Just pull the latest image available with:
+
+```
+$ docker pull kpacha/mesos-influxdb-collector:latest
+```
 
 Alternatively, if you have Go installed:
 
 ```
 $ go get github.com/kpacha/mesos-influxdb-collector
-```
+``
 
 # Running
 
+The collector use these environmental vars:
+
++ `INFLUXDB_DB`
++ `INFLUXDB_HOST`
++ `INFLUXDB_PORT`
++ `INFLUXDB_USER`
++ `INFLUXDB_PWD`
++ `MESOS_HOST`
++ `MESOS_PORT`
++ `COLLECTOR_LAPSE`
++ `COLLECTOR_LIFETIME`
+
+## Dockerized version
+
+Run the container with the default params (check the Dockerfile and overwrite whatever you need):
+
 ```
-./mesos-influxdb-collector -h
+$ docker pull --name mesos-influxdb-collector \
+    -e INFLUX_USER=admin \
+    -e INFLUX_PWD=secret \
+    -it --rm kpacha/mesos-influxdb-collector
+```
+
+Since the default value for `INFLUXDB_HOST` is `ìnfluxb`, you can link the collector to the influxdb container, dependeing on your environment.
+
+```
+$ docker pull -it --rm --name mesos-influxdb-collector --link influxdb kpacha/mesos-influxdb-collector
+```
+
+## Binary version
+
+```
+$ ./mesos-influxdb-collector -h
 Usage of ./mesos-influxdb-collector:
   -Id string
       influxdb database (default "mesos")
@@ -34,7 +69,7 @@ Usage of ./mesos-influxdb-collector:
       sleep time between collections in seconds (default 1)
 ```
 
-The binary also accepts those params as environmnetal variables.
+This is the relation between those params and the environmnetal variables listed above.
 
 Flag | EnvVar
 ---- | ------
@@ -46,4 +81,4 @@ Flag | EnvVar
 `d`  | `COLLECTOR_LAPSE`
 `l`  | `COLLECTOR_LIFETIME`
 
-The credentials for the influxdb database are accepted just as env_var (`INFLUX_USER` & `INFLUX_PWD`)
+The credentials for the influxdb database are accepted just as env_var (`INFLUXDB_USER` & `INFLUXDB_PWD`)
