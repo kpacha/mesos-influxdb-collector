@@ -9,7 +9,9 @@ Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/meso
 
 Alternatively, if you have Go installed:
 
+```
 $ go get github.com/kpacha/mesos-influxdb-collector
+```
 
 # Running
 
