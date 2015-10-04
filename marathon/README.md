@@ -12,5 +12,7 @@ Fix the [mesos-influxdb-collector.json](https://github.com/kpacha/mesos-influxdb
 After updating the app definition, send it to your marathon instance (once again, replace the `$MARATHON_HOST` & `$MARATHON_PORT` with the right value for your environment)
 
 ```
-$ curl -iH'Content-Type: application/json' -XPUT "http://$MARATHON_HOST:$MARATHON_PORT/v2/apps/mesos-influxdb-collector" -d@mesos-influxdb-collector.json
+$ curl -iH'Content-Type: application/json' -XPUT \
+    -d@mesos-influxdb-collector.json \
+    http://$MARATHON_HOST:$MARATHON_PORT/v2/apps/mesos-influxdb-collector
 ```
