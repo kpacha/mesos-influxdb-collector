@@ -8,4 +8,5 @@ go:
   - 1.4.1
   - 1.4
 
-install: true
+install:
+  - go get ./...
