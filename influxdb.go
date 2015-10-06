@@ -63,10 +63,8 @@ func (i *Influxdb) report() {
 }
 
 func (i Influxdb) Store(stats *Stats) error {
-	pts := append(i.getMastersPoints(stats), i.getMesosPoints(stats)...)
-
 	bps := client.BatchPoints{
-		Points:          pts,
+		Points:          i.getMesosPoints(stats),
 		Database:        i.Config.DB,
 		RetentionPolicy: "default",
 	}
@@ -82,20 +80,11 @@ func (i *Influxdb) getMesosPoints(stats *Stats) []client.Point {
 		i.getSystemPoint(stats),
 		//i.getRegistrarPoint(stats),
 		i.getTasksPoint(stats),
-	}
-}
-
-func (i *Influxdb) getMastersPoints(stats *Stats) []client.Point {
-	return []client.Point{
-		i.getMastersCpuPoint(stats),
-		i.getMastersDiskPoint(stats),
-		i.getMastersMemPoint(stats),
-		i.getMastersFrameworksPoint(stats),
-		i.getMastersTasksPoint(stats),
-		i.getMastersSlavesPoint(stats),
-		i.getMastersEventQueuePoint(stats),
-		i.getMastersMessagesPoint(stats),
-		i.getMastersGlobalPoint(stats),
+		i.getFrameworksPoint(stats),
+		i.getSlavesPoint(stats),
+		i.getEventQueuePoint(stats),
+		i.getMessagesPoint(stats),
+		i.getGlobalPoint(stats),
 	}
 }
 
@@ -103,9 +92,9 @@ func (i *Influxdb) getCpuPoint(stats *Stats) client.Point {
 	return client.Point{
 		Measurement: "cpu",
 		Fields: map[string]interface{}{
-			"percent": stats.CpusPercent,
-			"total":   stats.CpusTotal,
-			"used":    stats.CpusUsed,
+			"percent": stats.Master_cpusPercent,
+			"total":   stats.Master_cpusTotal,
+			"used":    stats.Master_cpusUsed,
 		},
 		Time: stats.Time,
 	}
@@ -115,9 +104,9 @@ func (i *Influxdb) getDiskPoint(stats *Stats) client.Point {
 	return client.Point{
 		Measurement: "disk",
 		Fields: map[string]interface{}{
-			"percent": stats.DiskPercent,
-			"total":   stats.DiskTotal,
-			"used":    stats.DiskUsed,
+			"percent": stats.Master_diskPercent,
+			"total":   stats.Master_diskTotal,
+			"used":    stats.Master_diskUsed,
 		},
 		Time: stats.Time,
 	}
@@ -127,9 +116,9 @@ func (i *Influxdb) getMemPoint(stats *Stats) client.Point {
 	return client.Point{
 		Measurement: "mem",
 		Fields: map[string]interface{}{
-			"percent": stats.MemPercent,
-			"total":   stats.MemTotal,
-			"used":    stats.MemUsed,
+			"percent": stats.Master_memPercent,
+			"total":   stats.Master_memTotal,
+			"used":    stats.Master_memUsed,
 		},
 		Time: stats.Time,
 	}
@@ -139,31 +128,14 @@ func (i *Influxdb) getTasksPoint(stats *Stats) client.Point {
 	return client.Point{
 		Measurement: "tasks",
 		Fields: map[string]interface{}{
-			"failed":   stats.FailedTasks,
-			"finished": stats.FinishedTasks,
-			"killed":   stats.KilledTasks,
-			"lost":     stats.LostTasks,
-			"staging":  stats.StagedTasks,
-			"starting": stats.StartedTasks,
-		},
-		Time: stats.Time,
-	}
-}
-
-func (i *Influxdb) getGlobalPoint(stats *Stats) client.Point {
-	return client.Point{
-		Measurement: "global",
-		Fields: map[string]interface{}{
-			"activated_slaves":       stats.ActivatedSlaves,
-			"active_schedulers":      stats.ActiveSchedulers,
-			"active_tasks_gauge":     stats.ActiveTasksGauge,
-			"deactivated_slaves":     stats.DeactivatedSlaves,
-			"elected":                stats.Elected,
-			"invalid_status_updates": stats.InvalidStatusUpdates,
-			"outstanding_offers":     stats.OutstandingOffers,
-			"total_schedulers":       stats.TotalSchedulers,
-			"uptime":                 stats.Uptime,
-			"valid_status_updates":   stats.ValidStatusUpdates,
+			"error":    stats.Master_tasksError,
+			"failed":   stats.Master_tasksFailed,
+			"finished": stats.Master_tasksFinished,
+			"killed":   stats.Master_tasksKilled,
+			"lost":     stats.Master_tasksLost,
+			"running":  stats.Master_tasksRunning,
+			"staging":  stats.Master_tasksStaging,
+			"starting": stats.Master_tasksStarting,
 		},
 		Time: stats.Time,
 	}
@@ -187,57 +159,9 @@ func (i *Influxdb) getSystemPoint(stats *Stats) client.Point {
 	}
 }
 
-func (i *Influxdb) getMastersCpuPoint(stats *Stats) client.Point {
+func (i *Influxdb) getFrameworksPoint(stats *Stats) client.Point {
 	return client.Point{
-		Measurement: "master.cpu",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
-		Fields: map[string]interface{}{
-			"percent": stats.Master_cpusPercent,
-			"total":   stats.Master_cpusTotal,
-			"used":    stats.Master_cpusUsed,
-		},
-		Time: stats.Time,
-	}
-}
-
-func (i *Influxdb) getMastersDiskPoint(stats *Stats) client.Point {
-	return client.Point{
-		Measurement: "master.disk",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
-		Fields: map[string]interface{}{
-			"percent": stats.Master_diskPercent,
-			"total":   stats.Master_diskTotal,
-			"used":    stats.Master_diskUsed,
-		},
-		Time: stats.Time,
-	}
-}
-
-func (i *Influxdb) getMastersMemPoint(stats *Stats) client.Point {
-	return client.Point{
-		Measurement: "master.mem",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
-		Fields: map[string]interface{}{
-			"percent": stats.Master_memPercent,
-			"total":   stats.Master_memTotal,
-			"used":    stats.Master_memUsed,
-		},
-		Time: stats.Time,
-	}
-}
-
-func (i *Influxdb) getMastersFrameworksPoint(stats *Stats) client.Point {
-	return client.Point{
-		Measurement: "master.frameworks",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
+		Measurement: "frameworks",
 		Fields: map[string]interface{}{
 			"active":       stats.Master_frameworksActive,
 			"connected":    stats.Master_frameworksConnected,
@@ -248,32 +172,9 @@ func (i *Influxdb) getMastersFrameworksPoint(stats *Stats) client.Point {
 	}
 }
 
-func (i *Influxdb) getMastersTasksPoint(stats *Stats) client.Point {
+func (i *Influxdb) getSlavesPoint(stats *Stats) client.Point {
 	return client.Point{
-		Measurement: "master.tasks",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
-		Fields: map[string]interface{}{
-			"error":    stats.Master_tasksError,
-			"failed":   stats.Master_tasksFailed,
-			"finished": stats.Master_tasksFinished,
-			"killed":   stats.Master_tasksKilled,
-			"lost":     stats.Master_tasksLost,
-			"running":  stats.Master_tasksRunning,
-			"staging":  stats.Master_tasksStaging,
-			"starting": stats.Master_tasksStarting,
-		},
-		Time: stats.Time,
-	}
-}
-
-func (i *Influxdb) getMastersSlavesPoint(stats *Stats) client.Point {
-	return client.Point{
-		Measurement: "master.slaves",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
+		Measurement: "slaves",
 		Fields: map[string]interface{}{
 			"recovery_slave_removals":   stats.Master_recoverySlaveRemovals,
 			"slave_registrations":       stats.Master_slaveRegistrations,
@@ -290,12 +191,9 @@ func (i *Influxdb) getMastersSlavesPoint(stats *Stats) client.Point {
 	}
 }
 
-func (i *Influxdb) getMastersEventQueuePoint(stats *Stats) client.Point {
+func (i *Influxdb) getEventQueuePoint(stats *Stats) client.Point {
 	return client.Point{
-		Measurement: "master.event_queue",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
+		Measurement: "event_queue",
 		Fields: map[string]interface{}{
 			"dispatches":    stats.Master_eventQueueDispatches,
 			"http_requests": stats.Master_eventQueueHTTPRequests,
@@ -305,12 +203,9 @@ func (i *Influxdb) getMastersEventQueuePoint(stats *Stats) client.Point {
 	}
 }
 
-func (i *Influxdb) getMastersMessagesPoint(stats *Stats) client.Point {
+func (i *Influxdb) getMessagesPoint(stats *Stats) client.Point {
 	return client.Point{
-		Measurement: "master.messages",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
+		Measurement: "messages",
 		Fields: map[string]interface{}{
 			"dropped_messages":                       stats.Master_droppedMessages,
 			"messages_authenticate":                  stats.Master_messagesAuthenticate,
@@ -336,12 +231,9 @@ func (i *Influxdb) getMastersMessagesPoint(stats *Stats) client.Point {
 	}
 }
 
-func (i *Influxdb) getMastersGlobalPoint(stats *Stats) client.Point {
+func (i *Influxdb) getGlobalPoint(stats *Stats) client.Point {
 	return client.Point{
-		Measurement: "master.global",
-		Tags: map[string]string{
-			"node": stats.Node,
-		},
+		Measurement: "global",
 		Fields: map[string]interface{}{
 			"elected": stats.Master_elected,
 			"invalid_framework_to_executor_messages": stats.Master_invalidFrameworkToExecutorMessages,

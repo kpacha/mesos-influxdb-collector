@@ -19,7 +19,7 @@ type MesosCollector struct {
 }
 
 func NewMesosCollector(host string, port int) Collector {
-	u, err := url.Parse(fmt.Sprintf("http://%s:%d/stats.json", host, port))
+	u, err := url.Parse(fmt.Sprintf("http://%s:%d/metrics/snapshot", host, port))
 	if err != nil {
 		log.Fatal("Error collecting the stats from mesos: ", err)
 	}
