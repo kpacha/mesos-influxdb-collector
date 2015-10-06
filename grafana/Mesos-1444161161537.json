@@ -53,8 +53,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(elected) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(elected) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
             }
           ],
@@ -110,8 +110,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(uptime_secs) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(uptime_secs) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
             }
           ],
@@ -168,8 +168,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.frameworks",
-              "query": "SELECT mean(active) FROM \"master.frameworks\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "frameworks",
+              "query": "SELECT mean(active) FROM \"frameworks\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "tags": []
             }
@@ -227,8 +227,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(outstanding_offers) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(outstanding_offers) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
             }
           ],
@@ -284,12 +284,13 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.slaves",
-              "query": "SELECT mean(slaves_active) FROM \"master.slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "slaves",
+              "query": "SELECT mean(slaves_active) FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
             }
           ],
           "thresholds": "",
+          "timeFrom": "10s",
           "title": "Slaves",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -300,8 +301,7 @@
               "value": "null"
             }
           ],
-          "valueName": "avg",
-          "timeFrom": "10s"
+          "valueName": "avg"
         },
         {
           "cacheTimeout": null,
@@ -342,12 +342,13 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.tasks",
-              "query": "SELECT mean(running) FROM \"master.tasks\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "tasks",
+              "query": "SELECT mean(running) FROM \"tasks\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
             }
           ],
           "thresholds": "",
+          "timeFrom": "10s",
           "title": "Tasks",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -358,8 +359,7 @@
               "value": "null"
             }
           ],
-          "valueName": "avg",
-          "timeFrom": "10s"
+          "valueName": "avg"
         }
       ],
       "showTitle": false,
@@ -415,6 +415,7 @@
             }
           ],
           "thresholds": "0,70,85",
+          "timeFrom": "1m",
           "title": "CPU",
           "transparent": false,
           "type": "singlestat",
@@ -473,6 +474,7 @@
             }
           ],
           "thresholds": "0,70,90",
+          "timeFrom": "1m",
           "title": "MEM",
           "transparent": false,
           "type": "singlestat",
@@ -531,6 +533,7 @@
             }
           ],
           "thresholds": "0,60,80",
+          "timeFrom": "1m",
           "title": "DISK",
           "transparent": false,
           "type": "singlestat",
@@ -604,8 +607,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(valid_framework_to_executor_messages) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(valid_framework_to_executor_messages) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
             },
             {
@@ -617,8 +620,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(valid_status_update_acknowledgements) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(valid_status_update_acknowledgements) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": [],
               "target": ""
             },
@@ -631,8 +634,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(valid_status_updates) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(valid_status_updates) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": [],
               "target": ""
             }
@@ -703,8 +706,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(invalid_framework_to_executor_messages) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(invalid_framework_to_executor_messages) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "tags": []
             },
@@ -717,8 +720,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(invalid_status_update_acknowledgements) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(invalid_status_update_acknowledgements) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": [],
               "target": ""
             },
@@ -731,8 +734,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.global",
-              "query": "SELECT mean(invalid_status_updates) FROM \"master.global\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "global",
+              "query": "SELECT mean(invalid_status_updates) FROM \"global\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": [],
               "target": ""
             }
@@ -801,6 +804,6 @@
   },
   "refresh": "10s",
   "schemaVersion": 6,
-  "version": 6,
+  "version": 8,
   "links": []
 }

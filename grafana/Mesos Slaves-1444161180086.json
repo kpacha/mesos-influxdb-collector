@@ -1,7 +1,7 @@
 {
-  "id": 5,
-  "title": "Mesos Messages",
-  "originalTitle": "Mesos Messages",
+  "id": 3,
+  "title": "Mesos Slaves",
+  "originalTitle": "Mesos Slaves",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -33,8 +33,7 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
-          "id": 3,
-          "leftYAxisLabel": "%",
+          "id": 1,
           "legend": {
             "avg": false,
             "current": false,
@@ -48,13 +47,13 @@
           "linewidth": 2,
           "links": [],
           "nullPointMode": "connected",
-          "percentage": true,
+          "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
           "span": 12,
-          "stack": true,
+          "stack": false,
           "steppedLine": false,
           "targets": [
             {
@@ -62,27 +61,24 @@
               "fields": [
                 {
                   "func": "mean",
-                  "name": "messages_kill_task"
+                  "name": "slaves_active"
                 },
                 {
                   "func": "mean",
-                  "name": "messages_launch_tasks"
-                },
-                {
-                  "func": "mean",
-                  "name": "messages_reconcile_tasks"
+                  "name": "slaves_inactive"
                 }
               ],
+              "fill": "0",
               "groupByTags": [],
-              "measurement": "master.messages",
-              "query": "SELECT mean(messages_kill_task) as kill, mean(messages_launch_tasks) as launch, mean(messages_reconcile_tasks) as reconcile FROM \"master.messages\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "master.slaves",
+              "query": "SELECT mean(slaves_active) as active, mean(slaves_inactive) as inactive FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval) fill(0)",
               "rawQuery": true,
               "tags": []
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "task messages",
+          "title": "slaves",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative"
@@ -113,7 +109,7 @@
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
-            "leftMin": null,
+            "leftMin": 0,
             "rightLogBase": 1,
             "rightMax": null,
             "rightMin": null,
@@ -123,95 +119,6 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 2,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 12,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$col",
-              "fields": [
-                {
-                  "func": "mean",
-                  "name": "dispatches"
-                },
-                {
-                  "func": "mean",
-                  "name": "http_requests"
-                },
-                {
-                  "func": "mean",
-                  "name": "messages"
-                }
-              ],
-              "groupByTags": [],
-              "measurement": "master.event_queue",
-              "query": "SELECT mean(dispatches) as dispatches, mean(http_requests) as http_requests, mean(messages) as messages FROM \"master.event_queue\" WHERE $timeFilter GROUP BY time($interval)",
-              "rawQuery": true,
-              "tags": [],
-              "target": ""
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "event_queue",
-          "tooltip": {
-            "shared": true,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "short",
-            "short"
-          ]
-        }
-      ],
-      "title": "New row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": "influxdb",
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 4,
           "leftYAxisLabel": "%",
           "legend": {
             "avg": false,
@@ -236,39 +143,64 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "$col",
+              "alias": "registrations",
               "fields": [
                 {
                   "func": "mean",
-                  "name": "messages_deactivate_framework"
-                },
-                {
-                  "func": "mean",
-                  "name": "messages_framework_to_executor"
-                },
-                {
-                  "func": "mean",
-                  "name": "messages_register_framework"
-                },
-                {
-                  "func": "mean",
-                  "name": "messages_reregister_framework"
-                },
-                {
-                  "func": "mean",
-                  "name": "messages_unregister_framework"
+                  "name": "slave_registrations"
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.messages",
-              "query": "SELECT mean(messages_deactivate_framework) as deactivate, mean(messages_framework_to_executor) as to_executor, mean(messages_register_framework) as register, mean(messages_reregister_framework) as reregister FROM \"master.messages\" WHERE $timeFilter GROUP BY time($interval)",
-              "rawQuery": true,
+              "measurement": "slaves",
+              "query": "SELECT mean(slave_registrations) FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval)",
               "tags": []
+            },
+            {
+              "alias": "removals",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slave_removals"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "slaves",
+              "query": "SELECT mean(slave_removals) FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            },
+            {
+              "alias": "reregistrations",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "slave_reregistrations"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "slaves",
+              "query": "SELECT mean(slave_reregistrations) FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
+            },
+            {
+              "alias": "recovery_removals",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "recovery_slave_removals"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "slaves",
+              "query": "SELECT mean(recovery_slave_removals) FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval)",
+              "tags": [],
+              "target": ""
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "framework messages",
+          "title": "slave events",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative"
@@ -319,7 +251,7 @@
     }
   ],
   "time": {
-    "from": "now-1h",
+    "from": "now-6h",
     "to": "now"
   },
   "templating": {
@@ -330,6 +262,6 @@
   },
   "refresh": "30s",
   "schemaVersion": 6,
-  "version": 1,
+  "version": 2,
   "links": []
 }

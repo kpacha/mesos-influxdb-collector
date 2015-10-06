@@ -24,7 +24,7 @@
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
-            "leftMin": null,
+            "leftMin": 0,
             "rightLogBase": 1,
             "rightMax": null,
             "rightMin": null,
@@ -65,8 +65,8 @@
                 }
               ],
               "groupByTags": [],
-              "measurement": "master.tasks",
-              "query": "SELECT mean(running) FROM \"master.tasks\" WHERE $timeFilter GROUP BY time($interval)",
+              "measurement": "tasks",
+              "query": "SELECT mean(running) FROM \"tasks\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "tags": [],
               "target": ""
@@ -307,6 +307,6 @@
   },
   "refresh": "1m",
   "schemaVersion": 6,
-  "version": 1,
+  "version": 2,
   "links": []
 }

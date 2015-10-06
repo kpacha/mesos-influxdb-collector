@@ -78,7 +78,7 @@
               ],
               "groupByTags": [],
               "measurement": "master.frameworks",
-              "query": "SELECT mean(active) as active, mean(connected) as connected, mean(disconnected) as disconnected FROM \"master.frameworks\" WHERE $timeFilter GROUP BY time($interval)",
+              "query": "SELECT mean(active) as active, mean(connected) as connected, mean(disconnected) as disconnected FROM \"frameworks\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": true,
               "tags": []
             }
@@ -147,6 +147,6 @@
   },
   "refresh": "30m",
   "schemaVersion": 6,
-  "version": 0,
+  "version": 1,
   "links": []
 }
