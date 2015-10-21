@@ -6,14 +6,14 @@ import (
 
 type Stats struct {
 	Allocator_eventQueueDispatches             int     `json:"allocator/event_queue_dispatches"`
-	Master_cpusPercent                         int     `json:"master/cpus_percent"`
-	Master_cpusRevocablePercent                int     `json:"master/cpus_revocable_percent"`
-	Master_cpusRevocableTotal                  int     `json:"master/cpus_revocable_total"`
-	Master_cpusRevocableUsed                   int     `json:"master/cpus_revocable_used"`
+	Master_cpusPercent                         float64 `json:"master/cpus_percent"`
+	Master_cpusRevocablePercent                float64 `json:"master/cpus_revocable_percent"`
+	Master_cpusRevocableTotal                  float64 `json:"master/cpus_revocable_total"`
+	Master_cpusRevocableUsed                   float64 `json:"master/cpus_revocable_used"`
 	Master_cpusTotal                           int     `json:"master/cpus_total"`
 	Master_cpusUsed                            int     `json:"master/cpus_used"`
-	Master_diskPercent                         int     `json:"master/disk_percent"`
-	Master_diskRevocablePercent                int     `json:"master/disk_revocable_percent"`
+	Master_diskPercent                         float64 `json:"master/disk_percent"`
+	Master_diskRevocablePercent                float64 `json:"master/disk_revocable_percent"`
 	Master_diskRevocableTotal                  int     `json:"master/disk_revocable_total"`
 	Master_diskRevocableUsed                   int     `json:"master/disk_revocable_used"`
 	Master_diskTotal                           int     `json:"master/disk_total"`
@@ -30,8 +30,8 @@ type Stats struct {
 	Master_invalidFrameworkToExecutorMessages  int     `json:"master/invalid_framework_to_executor_messages"`
 	Master_invalidStatusUpdateAcknowledgements int     `json:"master/invalid_status_update_acknowledgements"`
 	Master_invalidStatusUpdates                int     `json:"master/invalid_status_updates"`
-	Master_memPercent                          int     `json:"master/mem_percent"`
-	Master_memRevocablePercent                 int     `json:"master/mem_revocable_percent"`
+	Master_memPercent                          float64 `json:"master/mem_percent"`
+	Master_memRevocablePercent                 float64 `json:"master/mem_revocable_percent"`
 	Master_memRevocableTotal                   int     `json:"master/mem_revocable_total"`
 	Master_memRevocableUsed                    int     `json:"master/mem_revocable_used"`
 	Master_memTotal                            int     `json:"master/mem_total"`
