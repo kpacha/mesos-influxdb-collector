@@ -11,7 +11,7 @@ type Stats struct {
 	Master_cpusRevocableTotal                  float64 `json:"master/cpus_revocable_total"`
 	Master_cpusRevocableUsed                   float64 `json:"master/cpus_revocable_used"`
 	Master_cpusTotal                           int     `json:"master/cpus_total"`
-	Master_cpusUsed                            int     `json:"master/cpus_used"`
+	Master_cpusUsed                            float64 `json:"master/cpus_used"`
 	Master_diskPercent                         float64 `json:"master/disk_percent"`
 	Master_diskRevocablePercent                float64 `json:"master/disk_revocable_percent"`
 	Master_diskRevocableTotal                  int     `json:"master/disk_revocable_total"`
