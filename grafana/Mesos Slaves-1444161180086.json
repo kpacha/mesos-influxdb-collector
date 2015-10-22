@@ -1,5 +1,5 @@
 {
-  "id": 3,
+  "id": 5,
   "title": "Mesos Slaves",
   "originalTitle": "Mesos Slaves",
   "tags": [],
@@ -17,7 +17,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -34,6 +34,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 1,
+          "interval": ">30s",
           "legend": {
             "avg": false,
             "current": false,
@@ -71,7 +72,7 @@
               "fill": "0",
               "groupByTags": [],
               "measurement": "master.slaves",
-              "query": "SELECT mean(slaves_active) as active, mean(slaves_inactive) as inactive FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(slaves_active) as active, max(slaves_inactive) as inactive FROM \"slaves\" WHERE $timeFilter GROUP BY time($interval) fill(0)",
               "rawQuery": true,
               "tags": []
             }
@@ -102,7 +103,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -262,6 +263,6 @@
   },
   "refresh": "30s",
   "schemaVersion": 6,
-  "version": 2,
+  "version": 3,
   "links": []
 }
