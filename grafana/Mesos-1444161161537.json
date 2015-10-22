@@ -1,5 +1,5 @@
 {
-  "id": 1,
+  "id": 2,
   "title": "Mesos",
   "originalTitle": "Mesos",
   "tags": [],
@@ -23,7 +23,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "none",
@@ -80,7 +80,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "s",
@@ -137,7 +137,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "none",
@@ -197,7 +197,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "none",
@@ -254,7 +254,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "none",
@@ -312,7 +312,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "none",
@@ -379,11 +379,12 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "percent",
           "id": 12,
-          "interval": null,
+          "interval": ">10s",
           "links": [],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
@@ -415,7 +416,7 @@
             }
           ],
           "thresholds": "0,70,85",
-          "timeFrom": "1m",
+          "timeFrom": "10m",
           "title": "CPU",
           "transparent": false,
           "type": "singlestat",
@@ -438,11 +439,12 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "percent",
           "id": 13,
-          "interval": null,
+          "interval": ">10s",
           "links": [],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
@@ -474,7 +476,7 @@
             }
           ],
           "thresholds": "0,70,90",
-          "timeFrom": "1m",
+          "timeFrom": "10m",
           "title": "MEM",
           "transparent": false,
           "type": "singlestat",
@@ -497,11 +499,12 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "format": "percent",
           "id": 14,
-          "interval": null,
+          "interval": ">10s",
           "links": [],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
@@ -533,7 +536,7 @@
             }
           ],
           "thresholds": "0,60,80",
-          "timeFrom": "1m",
+          "timeFrom": "10m",
           "title": "DISK",
           "transparent": false,
           "type": "singlestat",
@@ -558,7 +561,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -575,6 +578,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 2,
+          "interval": ">30s",
           "leftYAxisLabel": "%",
           "legend": {
             "avg": false,
@@ -658,7 +662,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -675,6 +679,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 1,
+          "interval": ">30s",
           "legend": {
             "avg": false,
             "current": false,
@@ -793,7 +798,7 @@
     }
   ],
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "templating": {
@@ -804,6 +809,6 @@
   },
   "refresh": "10s",
   "schemaVersion": 6,
-  "version": 8,
+  "version": 3,
   "links": []
 }
