@@ -63,8 +63,10 @@ func (i *Influxdb) report() {
 }
 
 func (i Influxdb) Store(stats *Stats) error {
+	points := i.getMesosPoints(stats)
+	log.Println("Points to store:", points)
 	bps := client.BatchPoints{
-		Points:          i.getMesosPoints(stats),
+		Points:          points,
 		Database:        i.Config.DB,
 		RetentionPolicy: "default",
 	}
