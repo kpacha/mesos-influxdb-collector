@@ -17,7 +17,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -34,6 +34,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 1,
+          "interval": ">10s",
           "legend": {
             "avg": false,
             "current": false,
@@ -70,7 +71,7 @@
               ],
               "groupByTags": [],
               "measurement": "cpu",
-              "query": "SELECT mean(total) as total, mean(used) as used FROM \"cpu\" WHERE $timeFilter GROUP BY time($interval)",
+              "query": "SELECT max(total) as total, max(used) as used FROM \"cpu\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": true,
               "tags": [],
               "target": ""
@@ -94,7 +95,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 3,
@@ -112,6 +113,7 @@
             "thresholdLine": false
           },
           "id": 4,
+          "interval": ">30s",
           "legend": {
             "avg": false,
             "current": false,
@@ -174,7 +176,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -191,6 +193,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 2,
+          "interval": ">10s",
           "legend": {
             "avg": false,
             "current": false,
@@ -227,7 +230,7 @@
               ],
               "groupByTags": [],
               "measurement": "mem",
-              "query": "SELECT mean(total) as total, mean(used) as used FROM \"mem\" WHERE $timeFilter GROUP BY time($interval)",
+              "query": "SELECT max(total) as total, max(used) as used FROM \"mem\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": true,
               "tags": []
             }
@@ -250,7 +253,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 3,
@@ -268,6 +271,7 @@
             "thresholdLine": false
           },
           "id": 5,
+          "interval": ">30s",
           "legend": {
             "avg": false,
             "current": false,
@@ -330,7 +334,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -347,6 +351,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 3,
+          "interval": ">10s",
           "legend": {
             "avg": false,
             "current": false,
@@ -383,7 +388,7 @@
               ],
               "groupByTags": [],
               "measurement": "disk",
-              "query": "SELECT mean(total) as total, mean(used) as used FROM \"disk\" WHERE $timeFilter GROUP BY time($interval)",
+              "query": "SELECT max(total) as total, max(used) as used FROM \"disk\" WHERE $timeFilter GROUP BY time($interval)",
               "rawQuery": true,
               "tags": []
             }
@@ -406,7 +411,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "influxdb",
+          "datasource": "mesos",
           "editable": true,
           "error": false,
           "fill": 3,
@@ -424,6 +429,7 @@
             "thresholdLine": false
           },
           "id": 6,
+          "interval": ">30s",
           "leftYAxisLabel": "",
           "legend": {
             "avg": false,
@@ -525,6 +531,6 @@
   },
   "refresh": "10s",
   "schemaVersion": 6,
-  "version": 1,
+  "version": 2,
   "links": []
 }
