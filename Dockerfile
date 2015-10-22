@@ -1,7 +1,7 @@
 FROM golang:1.5.1-onbuild
 MAINTAINER kpacha
 
-ENV MESOS_HOST=master.mesos
+ENV MESOS_HOST=leader.mesos
 ENV MESOS_PORT=5050
 
 ENV INFLUXDB_HOST=influxdb
