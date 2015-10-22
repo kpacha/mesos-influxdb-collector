@@ -38,5 +38,6 @@ func (m MesosCollector) Collect(stats *Stats) error {
 	}
 	stats.Node = m.node
 	stats.Time = time.Now()
+	log.Println("Mesos metrics:", *stats)
 	return nil
 }
