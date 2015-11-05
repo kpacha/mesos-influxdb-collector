@@ -28,8 +28,10 @@ The collector use these environmental vars:
 + `INFLUXDB_PORT`
 + `INFLUXDB_USER`
 + `INFLUXDB_PWD`
-+ `MESOS_HOST`
-+ `MESOS_PORT`
++ `MESOS_MASTER_HOST`
++ `MESOS_MASTER_PORT`
++ `MESOS_SLAVE_HOST`
++ `MESOS_SLAVE_PORT`
 + `COLLECTOR_LAPSE`
 + `COLLECTOR_LIFETIME`
 
@@ -63,10 +65,14 @@ Usage of ./mesos-influxdb-collector:
       influxdb host (default "localhost")
   -Ip int
       influxdb port (default 8086)
-  -Mh string
-      mesos host (default "localhost")
-  -Mp int
-      mesos port (default 5050)
+  -Mmh string
+      mesos master host (default "localhost")
+  -Mmp int
+      mesos master port (default 5050)
+  -Msh string
+      mesos slave host (default "localhost")
+  -Msp int
+      mesos slave port (default 5051)
   -d int
       die after N seconds (default 300)
   -l int
@@ -75,15 +81,17 @@ Usage of ./mesos-influxdb-collector:
 
 This is the relation between those params and the environmnetal variables listed above.
 
-Flag | EnvVar
----- | ------
-`Id` | `INFLUXDB_DB`
-`Ih` | `INFLUXDB_HOST`
-`Ip` | `INFLUXDB_PORT`
-`Mh` | `MESOS_HOST`
-`Mp` | `MESOS_PORT`
-`d`  | `COLLECTOR_LAPSE`
-`l`  | `COLLECTOR_LIFETIME`
+Flag  | EnvVar
+----  | ------
+`Id`  | `INFLUXDB_DB`
+`Ih`  | `INFLUXDB_HOST`
+`Ip`  | `INFLUXDB_PORT`
+`Mmh` | `MESOS_MASTER_HOST`
+`Mmp` | `MESOS_MASTER_PORT`
+`Msh` | `MESOS_SLAVE_HOST`
+`Msp` | `MESOS_SLAVE_PORT`
+`d`   | `COLLECTOR_LAPSE`
+`l`   | `COLLECTOR_LIFETIME`
 
 The credentials for the influxdb database are accepted just as env_var (`INFLUXDB_USER` & `INFLUXDB_PWD`)
 

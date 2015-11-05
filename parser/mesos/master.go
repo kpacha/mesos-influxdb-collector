@@ -1,10 +1,204 @@
-package main
+package mesos
 
 import (
+	"encoding/json"
+	"github.com/kpacha/mesos-influxdb-collector/store"
+	"io"
 	"time"
 )
 
-type Stats struct {
+type MasterParser struct {
+	Node string
+}
+
+func (mp MasterParser) Parse(r io.Reader) ([]store.Point, error) {
+	var stats MasterStats
+	if err := json.NewDecoder(r).Decode(stats); err != nil {
+		return []store.Point{}, err
+	}
+	stats.Node = mp.Node
+	stats.Time = time.Now()
+	return mp.getMesosPoints(stats), nil
+}
+
+func (mp MasterParser) getMesosPoints(stats MasterStats) []store.Point {
+	return []store.Point{
+		mp.getCpuPoint(stats),
+		mp.getDiskPoint(stats),
+		mp.getMemPoint(stats),
+		mp.getSystemPoint(stats),
+		//mp.getRegistrarPoint(stats),
+		mp.getTasksPoint(stats),
+		mp.getFrameworksPoint(stats),
+		mp.getSlavesPoint(stats),
+		mp.getEventQueuePoint(stats),
+		mp.getMessagesPoint(stats),
+		mp.getGlobalPoint(stats),
+	}
+}
+
+func (mp MasterParser) getCpuPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "cpu",
+		Fields: map[string]interface{}{
+			"percent": stats.Master_cpusPercent,
+			"total":   stats.Master_cpusTotal,
+			"used":    stats.Master_cpusUsed,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getDiskPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "disk",
+		Fields: map[string]interface{}{
+			"percent": stats.Master_diskPercent,
+			"total":   stats.Master_diskTotal,
+			"used":    stats.Master_diskUsed,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getMemPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "mem",
+		Fields: map[string]interface{}{
+			"percent": stats.Master_memPercent,
+			"total":   stats.Master_memTotal,
+			"used":    stats.Master_memUsed,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getTasksPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "tasks",
+		Fields: map[string]interface{}{
+			"error":    stats.Master_tasksError,
+			"failed":   stats.Master_tasksFailed,
+			"finished": stats.Master_tasksFinished,
+			"killed":   stats.Master_tasksKilled,
+			"lost":     stats.Master_tasksLost,
+			"running":  stats.Master_tasksRunning,
+			"staging":  stats.Master_tasksStaging,
+			"starting": stats.Master_tasksStarting,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getSystemPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "system",
+		Tags: map[string]string{
+			"node": stats.Node,
+		},
+		Fields: map[string]interface{}{
+			"cpus_total":      stats.System_cpusTotal,
+			"load_15min":      stats.System_load15min,
+			"load_1min":       stats.System_load1min,
+			"load_5min":       stats.System_load5min,
+			"mem_free_bytes":  stats.System_memFreeBytes,
+			"mem_total_bytes": stats.System_memTotalBytes,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getFrameworksPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "frameworks",
+		Fields: map[string]interface{}{
+			"active":       stats.Master_frameworksActive,
+			"connected":    stats.Master_frameworksConnected,
+			"disconnected": stats.Master_frameworksDisconnected,
+			"inactive":     stats.Master_frameworksInactive,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getSlavesPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "slaves",
+		Fields: map[string]interface{}{
+			"recovery_slave_removals":   stats.Master_recoverySlaveRemovals,
+			"slave_registrations":       stats.Master_slaveRegistrations,
+			"slave_removals":            stats.Master_slaveRemovals,
+			"slave_reregistrations":     stats.Master_slaveReregistrations,
+			"slave_shutdowns_canceled":  stats.Master_slaveShutdownsCanceled,
+			"slave_shutdowns_scheduled": stats.Master_slaveShutdownsScheduled,
+			"slaves_active":             stats.Master_slavesActive,
+			"slaves_connected":          stats.Master_slavesConnected,
+			"slaves_disconnected":       stats.Master_slavesDisconnected,
+			"slaves_inactive":           stats.Master_slavesInactive,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getEventQueuePoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "event_queue",
+		Fields: map[string]interface{}{
+			"dispatches":    stats.Master_eventQueueDispatches,
+			"http_requests": stats.Master_eventQueueHTTPRequests,
+			"messages":      stats.Master_eventQueueMessages,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getMessagesPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "messages",
+		Fields: map[string]interface{}{
+			"dropped_messages":                       stats.Master_droppedMessages,
+			"messages_authenticate":                  stats.Master_messagesAuthenticate,
+			"messages_deactivate_framework":          stats.Master_messagesDeactivateFramework,
+			"messages_decline_offers":                stats.Master_messagesDeclineOffers,
+			"messages_exited_executor":               stats.Master_messagesExitedExecutor,
+			"messages_framework_to_executor":         stats.Master_messagesFrameworkToExecutor,
+			"messages_kill_task":                     stats.Master_messagesKillTask,
+			"messages_launch_tasks":                  stats.Master_messagesLaunchTasks,
+			"messages_reconcile_tasks":               stats.Master_messagesReconcileTasks,
+			"messages_register_framework":            stats.Master_messagesRegisterFramework,
+			"messages_register_slave":                stats.Master_messagesRegisterSlave,
+			"messages_reregister_framework":          stats.Master_messagesReregisterFramework,
+			"messages_reregister_slave":              stats.Master_messagesReregisterSlave,
+			"messages_resource_request":              stats.Master_messagesResourceRequest,
+			"messages_revive_offers":                 stats.Master_messagesReviveOffers,
+			"messages_status_update":                 stats.Master_messagesStatusUpdate,
+			"messages_status_update_acknowledgement": stats.Master_messagesStatusUpdateAcknowledgement,
+			"messages_unregister_framework":          stats.Master_messagesUnregisterFramework,
+			"messages_unregister_slave":              stats.Master_messagesUnregisterSlave,
+		},
+		Time: stats.Time,
+	}
+}
+
+func (mp MasterParser) getGlobalPoint(stats MasterStats) store.Point {
+	return store.Point{
+		Measurement: "global",
+		Fields: map[string]interface{}{
+			"elected": stats.Master_elected,
+			"invalid_framework_to_executor_messages": stats.Master_invalidFrameworkToExecutorMessages,
+			"invalid_status_update_acknowledgements": stats.Master_invalidStatusUpdateAcknowledgements,
+			"invalid_status_updates":                 stats.Master_invalidStatusUpdates,
+			"outstanding_offers":                     stats.Master_outstandingOffers,
+			"uptime_secs":                            stats.Master_uptimeSecs,
+			"valid_framework_to_executor_messages":   stats.Master_validFrameworkToExecutorMessages,
+			"valid_status_update_acknowledgements":   stats.Master_validStatusUpdateAcknowledgements,
+			"valid_status_updates":                   stats.Master_validStatusUpdates,
+		},
+		Time: stats.Time,
+	}
+}
+
+type MasterStats struct {
 	Allocator_eventQueueDispatches             int     `json:"allocator/event_queue_dispatches"`
 	Master_cpusPercent                         float64 `json:"master/cpus_percent"`
 	Master_cpusRevocablePercent                float64 `json:"master/cpus_revocable_percent"`
