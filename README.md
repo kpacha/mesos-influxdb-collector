@@ -75,14 +75,14 @@ Usage of ./mesos-influxdb-collector:
       mesos slave host (default "localhost")
   -Msp int
       mesos slave port (default 5051)
-  -Mh string
-      marathon host (default "localhost")
-  -Mp int
-      marathon port (default 8080)
   -d int
       die after N seconds (default 300)
   -l int
       sleep time between collections in seconds (default 1)
+  -mh string
+      marathon host (default "localhost")
+  -mp int
+      marathon port (default 8080)
 ```
 
 This is the relation between those params and the environmnetal variables listed above.
