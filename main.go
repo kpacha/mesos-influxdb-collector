@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/kpacha/mesos-influxdb-collector/collector"
+	"github.com/kpacha/mesos-influxdb-collector/store"
 	"log"
 	"os"
 	"strconv"
@@ -14,34 +16,46 @@ const (
 	InfluxdbDB      = "mesos"
 	InfluxdbUser    = "root"
 	InfluxdbPass    = "root"
-	MesosHost       = "localhost"
-	MesosPort       = 5050
+	MesosMasterHost = "localhost"
+	MesosMasterPort = 5050
+	MesosSlaveHost  = "localhost"
+	MesosSlavePort  = 5051
+	MarathonHost    = "localhost"
+	MarathonPort    = 8080
 	DefaultLapse    = 1
 	DefaultLifeTime = 300
 	DefaultLogLapse = 30
 
-	InfluxdbEnvName     = "INFLUXDB_HOST"
-	InfluxdbDBEnvName   = "INFLUXDB_DB"
-	InfluxdbPortEnvName = "INFLUXDB_PORT"
-	InfluxdbUserEnvName = "INFLUXDB_USER"
-	InfluxdbPassEnvName = "INFLUXDB_PWD"
-	MesosHostEnvName    = "MESOS_HOST"
-	MesosPortEnvName    = "MESOS_PORT"
-	LapseEnvName        = "COLLECTOR_LAPSE"
-	LifeTimeEnvName     = "COLLECTOR_LIFETIME"
+	InfluxdbEnvName        = "INFLUXDB_HOST"
+	InfluxdbDBEnvName      = "INFLUXDB_DB"
+	InfluxdbPortEnvName    = "INFLUXDB_PORT"
+	InfluxdbUserEnvName    = "INFLUXDB_USER"
+	InfluxdbPassEnvName    = "INFLUXDB_PWD"
+	MesosMasterHostEnvName = "MESOS_MASTER_HOST"
+	MesosMasterPortEnvName = "MESOS_MASTER_PORT"
+	MesosSlaveHostEnvName  = "MESOS_SLAVE_HOST"
+	MesosSlavePortEnvName  = "MESOS_SLAVE_PORT"
+	MarathonHostEnvName    = "MARATHON_HOST"
+	MarathonPortEnvName    = "MARATHON_PORT"
+	LapseEnvName           = "COLLECTOR_LAPSE"
+	LifeTimeEnvName        = "COLLECTOR_LIFETIME"
 )
 
 func main() {
 	ihost := flag.String("Ih", getStringParam(InfluxdbEnvName, InfluxdbHost), "influxdb host")
 	iport := flag.Int("Ip", getIntParam(InfluxdbPortEnvName, InfluxdbPort), "influxdb port")
 	idb := flag.String("Id", getStringParam(InfluxdbDBEnvName, InfluxdbDB), "influxdb database")
-	mhost := flag.String("Mh", getStringParam(MesosHostEnvName, MesosHost), "mesos host")
-	mport := flag.Int("Mp", getIntParam(MesosPortEnvName, MesosPort), "mesos port")
+	mmhost := flag.String("Mmh", getStringParam(MesosMasterHostEnvName, MesosMasterHost), "mesos master host")
+	mmport := flag.Int("Mmp", getIntParam(MesosMasterPortEnvName, MesosMasterPort), "mesos master port")
+	mshost := flag.String("Msh", getStringParam(MesosSlaveHostEnvName, MesosSlaveHost), "mesos slave host")
+	msport := flag.Int("Msp", getIntParam(MesosSlavePortEnvName, MesosSlavePort), "mesos slave port")
+	marathonHost := flag.String("mh", getStringParam(MarathonHostEnvName, MarathonHost), "marathon host")
+	marathonPort := flag.Int("mp", getIntParam(MarathonPortEnvName, MarathonPort), "marathon port")
 	lapse := flag.Int("l", getIntParam(LapseEnvName, DefaultLapse), "sleep time between collections in seconds")
 	dieAfter := flag.Int("d", getIntParam(LifeTimeEnvName, DefaultLifeTime), "die after N seconds")
 	flag.Parse()
 
-	influxdb := NewInfluxdb(InfluxdbConfig{
+	influxdb := store.NewInfluxdb(store.InfluxdbConfig{
 		Host:       *ihost,
 		Port:       *iport,
 		DB:         *idb,
@@ -50,9 +64,14 @@ func main() {
 		CheckLapse: DefaultLogLapse,
 	})
 
-	mesos := NewMesosCollector(*mhost, *mport)
+	col := collector.NewMultiCollector(
+		[]collector.Collector{
+			NewMesosMasterCollector(*mmhost, *mmport),
+			NewMesosSlaveCollector(*mshost, *msport),
+			NewMarathonCollector(*marathonHost, *marathonPort),
+		})
 
-	subscription := NewCollectorSubscription(lapse, &mesos, &influxdb)
+	subscription := NewCollectorSubscription(lapse, &col, &influxdb)
 
 	go report(&subscription)
 
