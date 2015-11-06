@@ -32,6 +32,8 @@ The collector use these environmental vars:
 + `MESOS_MASTER_PORT`
 + `MESOS_SLAVE_HOST`
 + `MESOS_SLAVE_PORT`
++ `MARATHON_HOST`
++ `MARATHON_PORT`
 + `COLLECTOR_LAPSE`
 + `COLLECTOR_LIFETIME`
 
@@ -73,6 +75,10 @@ Usage of ./mesos-influxdb-collector:
       mesos slave host (default "localhost")
   -Msp int
       mesos slave port (default 5051)
+  -Mh string
+      marathon host (default "localhost")
+  -Mp int
+      marathon port (default 8080)
   -d int
       die after N seconds (default 300)
   -l int
@@ -90,6 +96,8 @@ Flag  | EnvVar
 `Mmp` | `MESOS_MASTER_PORT`
 `Msh` | `MESOS_SLAVE_HOST`
 `Msp` | `MESOS_SLAVE_PORT`
+`mh`  | `MARATHON_HOST`
+`mp`  | `MARATHON_PORT`
 `d`   | `COLLECTOR_LAPSE`
 `l`   | `COLLECTOR_LIFETIME`
 

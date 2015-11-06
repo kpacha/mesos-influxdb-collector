@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/kpacha/mesos-influxdb-collector/collector"
+	"github.com/kpacha/mesos-influxdb-collector/parser/marathon"
 	"github.com/kpacha/mesos-influxdb-collector/parser/mesos"
 	"log"
 	"net/url"
@@ -22,4 +23,12 @@ func NewMesosSlaveCollector(host string, port int) collector.Collector {
 		log.Fatal("Error building the mesos slave collector:", err)
 	}
 	return collector.UrlCollector{Url: u.String(), Parser: mesos.SlaveParser{Node: host}}
+}
+
+func NewMarathonCollector(host string, port int) collector.Collector {
+	u, err := url.Parse(fmt.Sprintf("http://%s:%d/metrics", host, port))
+	if err != nil {
+		log.Fatal("Error building the marathon collector:", err)
+	}
+	return collector.UrlCollector{Url: u.String(), Parser: marathon.MarathonParser{Node: host}}
 }

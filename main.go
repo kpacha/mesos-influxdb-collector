@@ -20,6 +20,8 @@ const (
 	MesosMasterPort = 5050
 	MesosSlaveHost  = "localhost"
 	MesosSlavePort  = 5051
+	MarathonHost    = "localhost"
+	MarathonPort    = 8080
 	DefaultLapse    = 1
 	DefaultLifeTime = 300
 	DefaultLogLapse = 30
@@ -33,6 +35,8 @@ const (
 	MesosMasterPortEnvName = "MESOS_MASTER_PORT"
 	MesosSlaveHostEnvName  = "MESOS_SLAVE_HOST"
 	MesosSlavePortEnvName  = "MESOS_SLAVE_PORT"
+	MarathonHostEnvName    = "MARATHON_HOST"
+	MarathonPortEnvName    = "MARATHON_PORT"
 	LapseEnvName           = "COLLECTOR_LAPSE"
 	LifeTimeEnvName        = "COLLECTOR_LIFETIME"
 )
@@ -45,6 +49,8 @@ func main() {
 	mmport := flag.Int("Mmp", getIntParam(MesosMasterPortEnvName, MesosMasterPort), "mesos master port")
 	mshost := flag.String("Msh", getStringParam(MesosSlaveHostEnvName, MesosSlaveHost), "mesos slave host")
 	msport := flag.Int("Msp", getIntParam(MesosSlavePortEnvName, MesosSlavePort), "mesos slave port")
+	marathonHost := flag.String("mh", getStringParam(MarathonHostEnvName, MarathonHost), "marathon host")
+	marathonPort := flag.Int("mp", getIntParam(MarathonPortEnvName, MarathonPort), "marathon port")
 	lapse := flag.Int("l", getIntParam(LapseEnvName, DefaultLapse), "sleep time between collections in seconds")
 	dieAfter := flag.Int("d", getIntParam(LifeTimeEnvName, DefaultLifeTime), "die after N seconds")
 	flag.Parse()
@@ -59,8 +65,11 @@ func main() {
 	})
 
 	col := collector.NewMultiCollector(
-		[]collector.Collector{NewMesosMasterCollector(*mmhost, *mmport),
-			NewMesosSlaveCollector(*mshost, *msport)})
+		[]collector.Collector{
+			NewMesosMasterCollector(*mmhost, *mmport),
+			NewMesosSlaveCollector(*mshost, *msport),
+			NewMarathonCollector(*marathonHost, *marathonPort),
+		})
 
 	subscription := NewCollectorSubscription(lapse, &col, &influxdb)
 
