@@ -48,4 +48,6 @@ func (s *Subscription) collect(collector *collector.Collector, st *store.Store) 
 	if err = (*st).Store(points); err != nil {
 		log.Fatal("Error storing stats: ", err)
 	}
+
+	log.Printf("Collection completed! Collected %d points from %s", len(points), *collector)
 }

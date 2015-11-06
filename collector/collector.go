@@ -3,6 +3,7 @@ package collector
 import (
 	"github.com/kpacha/mesos-influxdb-collector/parser"
 	"github.com/kpacha/mesos-influxdb-collector/store"
+	"log"
 	"net/http"
 )
 
@@ -23,6 +24,7 @@ func (mc MultiCollector) Collect() ([]store.Point, error) {
 	for _, c := range mc.Collectors {
 		ps, err := c.Collect()
 		if err != nil {
+			log.Println("Error collecting from", c)
 			return data, err
 		}
 		data = append(data, ps...)
@@ -38,9 +40,9 @@ type UrlCollector struct {
 func (uc UrlCollector) Collect() ([]store.Point, error) {
 	r, err := http.Get(uc.Url)
 	if err != nil {
+		log.Println("Error connecting to", uc.Url)
 		return []store.Point{}, err
 	}
-	defer r.Body.Close()
 
 	return uc.Parser.Parse(r.Body)
 }
