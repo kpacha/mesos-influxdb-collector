@@ -44,7 +44,7 @@ func (mp MarathonParser) getMarathonPoints(stats MarathonStats) []store.Point {
 
 func (mp MarathonParser) getCounterPoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-servlet-context",
+		Measurement: "marathon-servlet-context",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -62,7 +62,7 @@ func (mp MarathonParser) getCounterPoint(stats MarathonStats) store.Point {
 
 func (mp MarathonParser) getGaugePoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-error",
+		Measurement: "marathon-error",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -80,7 +80,7 @@ func (mp MarathonParser) getGaugePoint(stats MarathonStats) store.Point {
 
 func (mp MarathonParser) getRequestTimePoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-request-time",
+		Measurement: "marathon-request-time",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -100,7 +100,7 @@ func (mp MarathonParser) getRequestTimePoint(stats MarathonStats) store.Point {
 
 func (mp MarathonParser) getDataSizePoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-data-size",
+		Measurement: "marathon-data-size",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -120,7 +120,7 @@ func (mp MarathonParser) getDataSizePoint(stats MarathonStats) store.Point {
 
 func (mp MarathonParser) getRequestPoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-request",
+		Measurement: "marathon-request",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -141,7 +141,7 @@ func (mp MarathonParser) getRequestPoint(stats MarathonStats) store.Point {
 
 func (mp MarathonParser) getRequestErrorPoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-request-error",
+		Measurement: "marathon-request-error",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -161,7 +161,7 @@ func (mp MarathonParser) getRequestErrorPoint(stats MarathonStats) store.Point {
 
 func (mp MarathonParser) getResponsePoint(stats MarathonStats) store.Point {
 	return store.Point{
-		Measurement: "mesos-request-error",
+		Measurement: "marathon-request-error",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},

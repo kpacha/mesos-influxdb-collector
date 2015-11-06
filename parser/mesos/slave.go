@@ -44,7 +44,7 @@ func (mp SlaveParser) getMesosPoints(stats SlaveStats) []store.Point {
 
 func (mp SlaveParser) getCpuPoint(stats SlaveStats) store.Point {
 	return store.Point{
-		Measurement: "cpu",
+		Measurement: "slave-cpu",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -59,7 +59,7 @@ func (mp SlaveParser) getCpuPoint(stats SlaveStats) store.Point {
 
 func (mp SlaveParser) getDiskPoint(stats SlaveStats) store.Point {
 	return store.Point{
-		Measurement: "disk",
+		Measurement: "slave-disk",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -74,7 +74,7 @@ func (mp SlaveParser) getDiskPoint(stats SlaveStats) store.Point {
 
 func (mp SlaveParser) getMemPoint(stats SlaveStats) store.Point {
 	return store.Point{
-		Measurement: "mem",
+		Measurement: "slave-mem",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -89,7 +89,7 @@ func (mp SlaveParser) getMemPoint(stats SlaveStats) store.Point {
 
 func (mp SlaveParser) getTasksPoint(stats SlaveStats) store.Point {
 	return store.Point{
-		Measurement: "tasks",
+		Measurement: "slave-tasks",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -126,7 +126,7 @@ func (mp SlaveParser) getSystemPoint(stats SlaveStats) store.Point {
 
 func (mp SlaveParser) getExecutorPoint(stats SlaveStats) store.Point {
 	return store.Point{
-		Measurement: "cpu",
+		Measurement: "slave-executor",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
@@ -143,7 +143,7 @@ func (mp SlaveParser) getExecutorPoint(stats SlaveStats) store.Point {
 
 func (mp SlaveParser) getGlobalPoint(stats SlaveStats) store.Point {
 	return store.Point{
-		Measurement: "global",
+		Measurement: "slave-global",
 		Tags: map[string]string{
 			"node": stats.Node,
 		},
