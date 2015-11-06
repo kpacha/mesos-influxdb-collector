@@ -6,5 +6,5 @@ import (
 )
 
 type Parser interface {
-	Parse(r io.Reader) ([]store.Point, error)
+	Parse(r io.ReadCloser) ([]store.Point, error)
 }

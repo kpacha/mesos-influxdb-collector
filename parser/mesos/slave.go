@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/kpacha/mesos-influxdb-collector/store"
 	"io"
+	"io/ioutil"
+	"log"
 	"time"
 )
 
@@ -11,9 +13,16 @@ type SlaveParser struct {
 	Node string
 }
 
-func (mp SlaveParser) Parse(r io.Reader) ([]store.Point, error) {
+func (mp SlaveParser) Parse(r io.ReadCloser) ([]store.Point, error) {
+	defer r.Close()
 	var stats SlaveStats
-	if err := json.NewDecoder(r).Decode(stats); err != nil {
+	body, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.Println("Error reading from", r)
+		return []store.Point{}, err
+	}
+	if err = json.Unmarshal(body, &stats); err != nil {
+		log.Println("Error parsing to SlaveStats")
 		return []store.Point{}, err
 	}
 	stats.Node = mp.Node
@@ -156,13 +165,13 @@ type SlaveStats struct {
 	Containerizer_mesos_containerDestroyErrors int     `json:"containerizer/mesos/container_destroy_errors"`
 	Slave_containerLaunchErrors                int     `json:"slave/container_launch_errors"`
 	Slave_cpusPercent                          float64 `json:"slave/cpus_percent"`
-	Slave_cpusRevocablePercent                 int     `json:"slave/cpus_revocable_percent"`
+	Slave_cpusRevocablePercent                 float64 `json:"slave/cpus_revocable_percent"`
 	Slave_cpusRevocableTotal                   int     `json:"slave/cpus_revocable_total"`
 	Slave_cpusRevocableUsed                    int     `json:"slave/cpus_revocable_used"`
 	Slave_cpusTotal                            int     `json:"slave/cpus_total"`
 	Slave_cpusUsed                             float64 `json:"slave/cpus_used"`
-	Slave_diskPercent                          int     `json:"slave/disk_percent"`
-	Slave_diskRevocablePercent                 int     `json:"slave/disk_revocable_percent"`
+	Slave_diskPercent                          float64 `json:"slave/disk_percent"`
+	Slave_diskRevocablePercent                 float64 `json:"slave/disk_revocable_percent"`
 	Slave_diskRevocableTotal                   int     `json:"slave/disk_revocable_total"`
 	Slave_diskRevocableUsed                    int     `json:"slave/disk_revocable_used"`
 	Slave_diskTotal                            int     `json:"slave/disk_total"`
@@ -176,7 +185,7 @@ type SlaveStats struct {
 	Slave_invalidFrameworkMessages             int     `json:"slave/invalid_framework_messages"`
 	Slave_invalidStatusUpdates                 int     `json:"slave/invalid_status_updates"`
 	Slave_memPercent                           float64 `json:"slave/mem_percent"`
-	Slave_memRevocablePercent                  int     `json:"slave/mem_revocable_percent"`
+	Slave_memRevocablePercent                  float64 `json:"slave/mem_revocable_percent"`
 	Slave_memRevocableTotal                    int     `json:"slave/mem_revocable_total"`
 	Slave_memRevocableUsed                     int     `json:"slave/mem_revocable_used"`
 	Slave_memTotal                             int     `json:"slave/mem_total"`

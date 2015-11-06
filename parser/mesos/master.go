@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/kpacha/mesos-influxdb-collector/store"
 	"io"
+	"io/ioutil"
+	"log"
 	"time"
 )
 
@@ -11,9 +13,16 @@ type MasterParser struct {
 	Node string
 }
 
-func (mp MasterParser) Parse(r io.Reader) ([]store.Point, error) {
+func (mp MasterParser) Parse(r io.ReadCloser) ([]store.Point, error) {
+	defer r.Close()
 	var stats MasterStats
-	if err := json.NewDecoder(r).Decode(stats); err != nil {
+	body, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.Println("Error reading from", r)
+		return []store.Point{}, err
+	}
+	if err = json.Unmarshal(body, &stats); err != nil {
+		log.Println("Error parsing to MasterStats")
 		return []store.Point{}, err
 	}
 	stats.Node = mp.Node
