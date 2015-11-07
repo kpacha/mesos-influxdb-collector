@@ -66,9 +66,9 @@ func main() {
 
 	col := collector.NewMultiCollector(
 		[]collector.Collector{
-			NewMesosMasterCollector(*mmhost, *mmport),
-			NewMesosSlaveCollector(*mshost, *msport),
-			NewMarathonCollector(*marathonHost, *marathonPort),
+			collector.NewMesosLeaderCollector(*mmhost, *mmport),
+			collector.NewMesosSlaveCollector(*mshost, *msport),
+			collector.NewMarathonCollector(*marathonHost, *marathonPort),
 		})
 
 	subscription := NewCollectorSubscription(lapse, &col, &influxdb)
