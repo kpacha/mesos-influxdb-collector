@@ -25,7 +25,7 @@ func ExampleParseMesosDNS() {
 	// []
 	// []
 	// []
-	// &{localhost 8086 mesos}
+	// &{localhost 8086 mesos 30}
 	// 0
 	// 0
 }
@@ -55,7 +55,7 @@ func ExampleParseMaster() {
 	// [{localhost 5051 true} {localhost 5052 false}]
 	// []
 	// []
-	// &{localhost 8086 mesos}
+	// &{localhost 8086 mesos 30}
 	// 0
 	// 1
 }
@@ -85,7 +85,7 @@ func ExampleParseSlave() {
 	// []
 	// [{localhost 5051} {localhost 5052}]
 	// []
-	// &{localhost 8086 mesos}
+	// &{localhost 8086 mesos 30}
 	// 100
 	// 1
 }
@@ -114,7 +114,7 @@ func ExampleParseMarathon() {
 	// []
 	// []
 	// [{localhost 5051} {localhost 5052}]
-	// &{localhost 8086 mesos}
+	// &{localhost 8086 mesos 30}
 	// 0
 	// 1
 }
@@ -139,7 +139,7 @@ func ExampleParseInfluxDB() {
 	// []
 	// []
 	// []
-	// &{influx 18086 custom}
+	// &{influx 18086 custom 30}
 	// 0
 	// 0
 }

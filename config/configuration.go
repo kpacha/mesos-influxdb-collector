@@ -36,9 +36,10 @@ type Master struct {
 }
 
 type InfluxDB struct {
-	Host string
-	Port int
-	DB   string
+	Host       string
+	Port       int
+	DB         string
+	CheckLapse int
 }
 
 type ConfigParser struct {
@@ -66,7 +67,10 @@ func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
 	}
 
 	if result.InfluxDB == nil {
-		result.InfluxDB = &InfluxDB{"localhost", 8086, "mesos"}
+		result.InfluxDB = &InfluxDB{"localhost", 8086, "mesos", 30}
+	}
+	if result.InfluxDB.CheckLapse == 0 {
+		result.InfluxDB.CheckLapse = 30
 	}
 
 	log.Printf("%+v\n", result)
