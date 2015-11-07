@@ -22,6 +22,8 @@ func NewCollectorFromConfig(configuration *config.Config) Collector {
 		collectors = append(collectors, NewMarathonCollector(marathonInstance.Host, marathonInstance.Port))
 	}
 
+	log.Println("Total collectors created:", len(collectors))
+
 	return NewMultiCollector(collectors)
 }
 
