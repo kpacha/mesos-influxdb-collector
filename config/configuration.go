@@ -3,8 +3,8 @@ package config
 import (
 	"log"
 
-	"io/ioutil"
 	"github.com/hashicorp/hcl"
+	"io/ioutil"
 )
 
 type Config struct {
@@ -12,6 +12,9 @@ type Config struct {
 	Master   []Master
 	Slave    []Server
 	Marathon []Server
+	InfluxDB *InfluxDB
+	Lapse    int
+	DieAfter int
 }
 
 type MesosDNS struct {
@@ -30,6 +33,12 @@ type Master struct {
 	Host   string
 	Port   int
 	Leader bool
+}
+
+type InfluxDB struct {
+	Host string
+	Port int
+	DB   string
 }
 
 type ConfigParser struct {
@@ -54,6 +63,10 @@ func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
 
 	if err := hcl.Decode(&result, hclText); err != nil {
 		return nil, err
+	}
+
+	if result.InfluxDB == nil {
+		result.InfluxDB = &InfluxDB{"localhost", 8086, "mesos"}
 	}
 
 	log.Printf("%+v\n", result)

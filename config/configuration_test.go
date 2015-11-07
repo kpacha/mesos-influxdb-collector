@@ -2,10 +2,9 @@ package config
 
 import (
 	"fmt"
-	"testing"
 )
 
-func TestParseMesosDNS(t *testing.T) {
+func ExampleParseMesosDNS() {
 	txtConfig := `mesosDNS {
 		domain = "mesos"
 		marathon = true
@@ -13,21 +12,25 @@ func TestParseMesosDNS(t *testing.T) {
 		port = 53
 	}`
 	cp := ConfigParser{}
-	c, err := cp.ParseConfig(txtConfig)
-	if err != nil {
-		t.Error(err)
-	}
+	c, _ := cp.ParseConfig(txtConfig)
 	fmt.Println(c.MesosDNS)
 	fmt.Println(c.Master)
 	fmt.Println(c.Slave)
 	fmt.Println(c.Marathon)
-	// Output: &{mesos true localhost 53}
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	// Output:
+	// &{mesos true localhost 53}
 	// []
 	// []
 	// []
+	// &{localhost 8086 mesos}
+	// 0
+	// 0
 }
 
-func TestParseMaster(t *testing.T) {
+func ExampleParseMaster() {
 	txtConfig := `Master {
 		host = "localhost"
 		port = 5051
@@ -36,23 +39,28 @@ func TestParseMaster(t *testing.T) {
 	Master {
 		host = "localhost"
 		port = 5052
-	}`
-	cp := ConfigParser{}
-	c, err := cp.ParseConfig(txtConfig)
-	if err != nil {
-		t.Error(err)
 	}
+	dieafter = 1`
+	cp := ConfigParser{}
+	c, _ := cp.ParseConfig(txtConfig)
 	fmt.Println(c.MesosDNS)
 	fmt.Println(c.Master)
 	fmt.Println(c.Slave)
 	fmt.Println(c.Marathon)
-	// Output: nil
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	// Output:
+	// <nil>
 	// [{localhost 5051 true} {localhost 5052 false}]
 	// []
 	// []
+	// &{localhost 8086 mesos}
+	// 0
+	// 1
 }
 
-func TestParseSlave(t *testing.T) {
+func ExampleParseSlave() {
 	txtConfig := `Slave {
 		host = "localhost"
 		port = 5051
@@ -60,23 +68,29 @@ func TestParseSlave(t *testing.T) {
 	Slave {
 		host = "localhost"
 		port = 5052
-	}`
-	cp := ConfigParser{}
-	c, err := cp.ParseConfig(txtConfig)
-	if err != nil {
-		t.Error(err)
 	}
+	lapse=100
+	dieAfter = 1`
+	cp := ConfigParser{}
+	c, _ := cp.ParseConfig(txtConfig)
 	fmt.Println(c.MesosDNS)
 	fmt.Println(c.Master)
 	fmt.Println(c.Slave)
 	fmt.Println(c.Marathon)
-	// Output: nil
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	// Output:
+	// <nil>
 	// []
 	// [{localhost 5051} {localhost 5052}]
 	// []
+	// &{localhost 8086 mesos}
+	// 100
+	// 1
 }
 
-func TestParseMarathon(t *testing.T) {
+func ExampleParseMarathon() {
 	txtConfig := `Marathon {
 		host = "localhost"
 		port = 5051
@@ -84,18 +98,48 @@ func TestParseMarathon(t *testing.T) {
 	Marathon {
 		host = "localhost"
 		port = 5052
-	}`
-	cp := ConfigParser{}
-	c, err := cp.ParseConfig(txtConfig)
-	if err != nil {
-		t.Error(err)
 	}
+	DieAfter = 1`
+	cp := ConfigParser{}
+	c, _ := cp.ParseConfig(txtConfig)
 	fmt.Println(c.MesosDNS)
 	fmt.Println(c.Master)
 	fmt.Println(c.Slave)
 	fmt.Println(c.Marathon)
-	// Output: nil
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	// Output:
+	// <nil>
 	// []
 	// []
 	// [{localhost 5051} {localhost 5052}]
+	// &{localhost 8086 mesos}
+	// 0
+	// 1
+}
+
+func ExampleParseInfluxDB() {
+	txtConfig := `InfluxDB {
+		host = "influx"
+		port = 18086
+		db = "custom"
+	}`
+	cp := ConfigParser{}
+	c, _ := cp.ParseConfig(txtConfig)
+	fmt.Println(c.MesosDNS)
+	fmt.Println(c.Master)
+	fmt.Println(c.Slave)
+	fmt.Println(c.Marathon)
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	// Output:
+	// <nil>
+	// []
+	// []
+	// []
+	// &{influx 18086 custom}
+	// 0
+	// 0
 }
