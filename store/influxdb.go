@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/influxdb/influxdb/client"
+	"github.com/kpacha/mesos-influxdb-collector/config"
 )
 
 type Store interface {
@@ -45,6 +46,17 @@ type InfluxdbConfig struct {
 type Influxdb struct {
 	Connection *client.Client
 	Config     InfluxdbConfig
+}
+
+func NewInfluxdbFromConfig(conf *config.Config, user, password string) Store {
+	return NewInfluxdb(InfluxdbConfig{
+		Host:       conf.InfluxDB.Host,
+		Port:       conf.InfluxDB.Port,
+		DB:         conf.InfluxDB.DB,
+		Username:   user,
+		Password:   password,
+		CheckLapse: conf.InfluxDB.CheckLapse,
+	})
 }
 
 func NewInfluxdb(conf InfluxdbConfig) Store {
