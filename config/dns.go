@@ -28,12 +28,15 @@ type DNSResolver struct {
 func NewDNSResolver(config *Config) (*DNSResolver, error) {
 	resolver := DNSResolver{config}
 	if err := resolver.resolveMesosMasters(); err != nil {
+		log.Println("Error resolving MesosMasters")
 		return nil, err
 	}
 	if err := resolver.resolveMesosSlaves(); err != nil {
+		log.Println("Error resolving MesosSlaves")
 		return nil, err
 	}
 	if err := resolver.resolveMarathon(); err != nil {
+		log.Println("Error resolving Marathon")
 		return nil, err
 	}
 	return &resolver, nil
@@ -47,7 +50,6 @@ func (r DNSResolver) resolveMesosMasters() error {
 
 	var masters []SRVRecord
 	if err = json.Unmarshal(body, &masters); err != nil {
-		log.Println("Error parsing to Master")
 		return err
 	}
 
@@ -70,7 +72,6 @@ func (r DNSResolver) resolveMesosSlaves() error {
 
 	var slaves []ARecord
 	if err = json.Unmarshal(body, &slaves); err != nil {
-		log.Println("Error parsing to Slave")
 		return err
 	}
 
@@ -89,7 +90,6 @@ func (r DNSResolver) resolveMarathon() error {
 
 	var instances []ARecord
 	if err = json.Unmarshal(body, &instances); err != nil {
-		log.Println("Error parsing to Marathon")
 		return err
 	}
 
@@ -102,15 +102,15 @@ func (r DNSResolver) resolveMarathon() error {
 
 func (r DNSResolver) getMesosMasterUrl() string {
 	//return r.getUrl("/v1/hosts/master")
-	return r.getUrl("/v1/services/_leader._tcp")
+	return r.getUrl("v1/services/_leader._tcp")
 }
 
 func (r DNSResolver) getMesosSlaveUrl() string {
-	return r.getUrl("/v1/hosts/slave")
+	return r.getUrl("v1/hosts/slave")
 }
 
 func (r DNSResolver) getMarathonUrl() string {
-	return r.getUrl("/v1/hosts/marathon")
+	return r.getUrl("v1/hosts/marathon")
 }
 
 func (r DNSResolver) getUrl(partial string) string {
