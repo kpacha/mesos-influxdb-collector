@@ -10,7 +10,8 @@ import (
 )
 
 type MasterParser struct {
-	Node string
+	Node   string
+	Leader bool
 }
 
 func (mp MasterParser) Parse(r io.ReadCloser) ([]store.Point, error) {
@@ -25,25 +26,26 @@ func (mp MasterParser) Parse(r io.ReadCloser) ([]store.Point, error) {
 		log.Println("Error parsing to MasterStats")
 		return []store.Point{}, err
 	}
-	stats.Node = mp.Node
 	stats.Time = time.Now()
 	return mp.getMesosPoints(stats), nil
 }
 
 func (mp MasterParser) getMesosPoints(stats MasterStats) []store.Point {
-	return []store.Point{
-		mp.getCpuPoint(stats),
-		mp.getDiskPoint(stats),
-		mp.getMemPoint(stats),
-		mp.getSystemPoint(stats),
-		//mp.getRegistrarPoint(stats),
-		mp.getTasksPoint(stats),
-		mp.getFrameworksPoint(stats),
-		mp.getSlavesPoint(stats),
-		mp.getEventQueuePoint(stats),
-		mp.getMessagesPoint(stats),
-		mp.getGlobalPoint(stats),
+	ps := []store.Point{mp.getSystemPoint(stats)}
+	if mp.Leader {
+		ps = append(ps,
+			mp.getCpuPoint(stats),
+			mp.getDiskPoint(stats),
+			mp.getMemPoint(stats),
+			//mp.getRegistrarPoint(stats),
+			mp.getTasksPoint(stats),
+			mp.getFrameworksPoint(stats),
+			mp.getSlavesPoint(stats),
+			mp.getEventQueuePoint(stats),
+			mp.getMessagesPoint(stats),
+			mp.getGlobalPoint(stats))
 	}
+	return ps
 }
 
 func (mp MasterParser) getCpuPoint(stats MasterStats) store.Point {
@@ -103,7 +105,7 @@ func (mp MasterParser) getSystemPoint(stats MasterStats) store.Point {
 	return store.Point{
 		Measurement: "system",
 		Tags: map[string]string{
-			"node": stats.Node,
+			"node": mp.Node,
 		},
 		Fields: map[string]interface{}{
 			"cpus_total":      stats.System_cpusTotal,
@@ -305,5 +307,4 @@ type MasterStats struct {
 	System_memFreeBytes                        int     `json:"system/mem_free_bytes"`
 	System_memTotalBytes                       int     `json:"system/mem_total_bytes"`
 	Time                                       time.Time
-	Node                                       string
 }
