@@ -73,6 +73,12 @@ func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
 		result.InfluxDB.CheckLapse = 30
 	}
 
+	if result.MesosDNS != nil {
+		if _, err := NewDNSResolver(result); err != nil {
+			return nil, err
+		}
+	}
+
 	log.Printf("%+v\n", result)
 
 	return result, nil

@@ -4,32 +4,6 @@ import (
 	"fmt"
 )
 
-func ExampleParseMesosDNS() {
-	txtConfig := `mesosDNS {
-		domain = "mesos"
-		marathon = true
-		host = "localhost"
-		port = 53
-	}`
-	cp := ConfigParser{}
-	c, _ := cp.ParseConfig(txtConfig)
-	fmt.Println(c.MesosDNS)
-	fmt.Println(c.Master)
-	fmt.Println(c.Slave)
-	fmt.Println(c.Marathon)
-	fmt.Println(c.InfluxDB)
-	fmt.Println(c.Lapse)
-	fmt.Println(c.DieAfter)
-	// Output:
-	// &{mesos true localhost 53}
-	// []
-	// []
-	// []
-	// &{localhost 8086 mesos 30}
-	// 0
-	// 0
-}
-
 func ExampleParseMaster() {
 	txtConfig := `Master {
 		host = "localhost"
@@ -120,7 +94,7 @@ func ExampleParseMarathon() {
 }
 
 func ExampleParseInfluxDB() {
-	txtConfig := `InfluxDB {
+	txtConfig := `influxdb {
 		host = "influx"
 		port = 18086
 		db = "custom"
