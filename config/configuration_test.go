@@ -30,7 +30,7 @@ func ExampleParseMaster() {
 	// []
 	// []
 	// &{localhost 8086 mesos 30}
-	// 0
+	// 30
 	// 1
 }
 
@@ -89,7 +89,7 @@ func ExampleParseMarathon() {
 	// []
 	// [{localhost 5051} {localhost 5052}]
 	// &{localhost 8086 mesos 30}
-	// 0
+	// 30
 	// 1
 }
 
@@ -114,6 +114,6 @@ func ExampleParseInfluxDB() {
 	// []
 	// []
 	// &{influx 18086 custom 30}
-	// 0
-	// 0
+	// 30
+	// 3600
 }

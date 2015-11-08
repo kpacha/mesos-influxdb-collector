@@ -67,6 +67,13 @@ func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
 		return nil, err
 	}
 
+	if result.Lapse == 0 {
+		result.Lapse = 30
+	}
+	if result.DieAfter == 0 {
+		result.DieAfter = 3600
+	}
+
 	if result.InfluxDB == nil {
 		result.InfluxDB = &InfluxDB{"localhost", 8086, "mesos", 30}
 	}
