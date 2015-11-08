@@ -22,7 +22,10 @@ Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/meso
 $ docker pull kpacha/mesos-influxdb-collector:latest
 ```
 
-Alternatively, if you have Go installed:
+Alternatively, get the last released binary from the [releases](https://github.com/kpacha/mesos-influxdb-collector/releases) section.
+
+
+Finally, if you love the hard way and have Go installed:
 
 ```
 $ go get github.com/kpacha/mesos-influxdb-collector
@@ -146,4 +149,4 @@ The credentials for the influxdb database are accepted just as env_var (`INFLUXD
 
 # Grafana dashboards
 
-The `fixtures/grafana` folder contains several grafana dashboard definitions. Go to the grafana website and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
+The [fixtures/grafana]((https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures/grafana) folder contains several grafana dashboard definitions. Go to the grafana website and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
