@@ -9,5 +9,5 @@ go:
   - 1.4
 
 install:
-  - make all
+  - make
   - go vet
