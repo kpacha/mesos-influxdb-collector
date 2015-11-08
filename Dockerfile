@@ -1,19 +1,15 @@
-FROM golang:1.5.1-onbuild
+FROM golang:1.5.1
 MAINTAINER kpacha
 
-ENV MESOS_MASTER_HOST=leader.mesos
-ENV MESOS_MASTER_PORT=5050
-ENV MESOS_SLAVE_HOST=slave.mesos
-ENV MESOS_SLAVE_PORT=5051
-
-ENV MARATHON_HOST=marathon.mesos
-ENV MARATHON_PORT=8080
-
-ENV INFLUXDB_HOST=influxdb
-ENV INFLUXDB_PORT=8086
-ENV INFLUXDB_DB=mesos
 ENV INFLUXDB_USER=root
 ENV INFLUXDB_PWD=root
 
-ENV COLLECTOR_LAPSE=1
-ENV COLLECTOR_LIFETIME=1800
+RUN mkdir -p /go/src/github.com/kpacha/mesos-influxdb-collector
+COPY . /go/src/github.com/kpacha/mesos-influxdb-collector
+
+WORKDIR /go/src/github.com/kpacha/mesos-influxdb-collector
+RUN make install
+
+ENTRYPOINT ["/go/bin/mesos-influxdb-collector"]
+
+CMD ["-c", "config.hcl"]
