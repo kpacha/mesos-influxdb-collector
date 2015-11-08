@@ -44,6 +44,7 @@ type InfluxDB struct {
 
 type ConfigParser struct {
 	Path string
+	AllowDNS bool
 }
 
 func (cp ConfigParser) Parse() (*Config, error) {
@@ -73,7 +74,7 @@ func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
 		result.InfluxDB.CheckLapse = 30
 	}
 
-	if result.MesosDNS != nil {
+	if cp.AllowDNS && result.MesosDNS != nil {
 		if _, err := NewDNSResolver(result); err != nil {
 			return nil, err
 		}
