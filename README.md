@@ -3,7 +3,16 @@ mesos-influxdb-collector
 
 Lightweight mesos stats collector for influxdb
 
-Since this collector is intended to be deployed as a [marathon](https://mesosphere.github.io/marathon) app, it comes with a *lifetime* param. This defines how long the collector will run until it dies, so marathon will re-launch it, allowing easy allocation optimizations. Check the [marathon/](https://github.com/kpacha/mesos-influxdb-collector/tree/master/marathon) folder for more details on how to launch it.
+Since this collector is intended to be deployed as a [marathon](https://mesosphere.github.io/marathon) app, it comes with a *lifetime* param. This defines how long the collector will run until it dies, so marathon will re-launch it, allowing easy allocation optimizations. Check the [fixtures/marathon/](https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures/marathon) folder for more details on how to launch it.
+
+# Goals
+
++ Discover the mesos cluster through `mesos-dns`
++ Collect the mesos leader stats
++ Collect the mesos master stats
++ Collect the mesos slave stats
++ Collect the marathon master stats
++ Collect the chronos task stats (TODO)
 
 # Installing
 
@@ -19,27 +28,93 @@ Alternatively, if you have Go installed:
 $ go get github.com/kpacha/mesos-influxdb-collector
 ```
 
-# Running
+# Integration with `mesos-dns`
+
+The `mesos-influxdb-collector` is able to discover all your mesos nodes (masters and slaves) and the marathon master using the REST API exposed by the [mesos-dns](http://mesosphere.github.io/mesos-dns/) service. Check the next section for details.
+
+# Configuration
 
 The collector use these environmental vars:
 
-+ `INFLUXDB_DB`
-+ `INFLUXDB_HOST`
-+ `INFLUXDB_PORT`
 + `INFLUXDB_USER`
 + `INFLUXDB_PWD`
-+ `MESOS_MASTER_HOST`
-+ `MESOS_MASTER_PORT`
-+ `MESOS_SLAVE_HOST`
-+ `MESOS_SLAVE_PORT`
-+ `MARATHON_HOST`
-+ `MARATHON_PORT`
-+ `COLLECTOR_LAPSE`
-+ `COLLECTOR_LIFETIME`
+
+It also requires a config file with the list of nodes to monitor or the details about the `mesos-dns` service among these other params:
+
++ *Lapse*: time between consecutive collections. Default: 30 seconds
++ *DieAfter*: duration of the running instance. Default: 1 hour
+
+### MesosDNS
+
+Optional. Add it if you have a `mesos-dns` service running in your mesos cluster.
+
+```
+mesosDNS {
+  domain = "mesos" // the domain used by the mesos-dns service
+  marathon = true // resolve marathon master
+  host = "master.mesos" // host of the mesos-dns service
+  port = 8123 // port of the REST API
+}
+```
+
+### InfluxDB
+
+Required.
+
+```
+influxdb {
+  host = "influxdb.marathon.mesos" // host of the influxdb instance
+  port = 8086 // port of the REST API
+  db = "mesos" // name of the database to use
+  checkLapse = 30 // ping frequency
+}
+```
+
+### Mesos masters
+
+For manual definition of some (or all) mesos masters, use the `Master` struct:
+
+```
+Master {
+  host = "localhost"
+  port = 5051
+  leader = true // optional
+}
+Master {
+  host = "localhost"
+  port = 5052
+}
+```
+
+### Mesos slaves
+
+For manual definition of some (or all) mesos slave, use the `Slave` struct:
+
+```
+Slave {
+  host = "localhost"
+  port = 5051
+}
+```
+
+### Marathon instances
+
+For manual definition of some (or all) marathon instances, use the `Marathon` struct:
+
+```
+Marathon {
+  host = "localhost"
+  port = 5052
+}
+```
+
+Check [`config/configuration_test.go`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/config/configuration_test.go) and [`conf.hcl`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/conf.hcl) for examples.
+
+# Running
 
 ## Dockerized version
 
-Run the container with the default params (check the Dockerfile and overwrite whatever you need):
+Run the container with the default params:
 
 ```
 $ docker pull --name mesos-influxdb-collector \
@@ -48,77 +123,27 @@ $ docker pull --name mesos-influxdb-collector \
     -it --rm kpacha/mesos-influxdb-collector
 ```
 
-Since the default value for `INFLUXDB_HOST` is `ìnfluxb`, you can link the collector to the influxdb container, dependeing on your environment.
+If you need to customize something, copy the `conf.hcl`, make your changes and link it as a volume:
 
 ```
-$ docker run --name mesos-influxdb-collector \
-    --link influxdb \
-    -it --rm kpacha/mesos-influxdb-collector
+$ docker pull --name mesos-influxdb-collector \
+    -v /path/to/my/custom/conf.hcl:/tmp/conf.hcl \
+    -it --rm kpacha/mesos-influxdb-collector -c /tmp/conf.hcl
 ```
+
+Tip: if you link your config file to `/go/src/github.com/kpacha/mesos-influxdb-collector/conf.hcl` you don't need to worry about that flag!
 
 ## Binary version
 
 ```
 $ ./mesos-influxdb-collector -h
 Usage of ./mesos-influxdb-collector:
-  -Id string
-      influxdb database (default "mesos")
-  -Ih string
-      influxdb host (default "localhost")
-  -Ip int
-      influxdb port (default 8086)
-  -Mmh string
-      mesos master host (default "localhost")
-  -Mmp int
-      mesos master port (default 5050)
-  -Msh string
-      mesos slave host (default "localhost")
-  -Msp int
-      mesos slave port (default 5051)
-  -d int
-      die after N seconds (default 300)
-  -l int
-      sleep time between collections in seconds (default 1)
-  -mh string
-      marathon host (default "localhost")
-  -mp int
-      marathon port (default 8080)
+  -c string
+      path to the config file (default "conf.hcl")
 ```
-
-This is the relation between those params and the environmnetal variables listed above.
-
-Flag  | EnvVar
-----  | ------
-`Id`  | `INFLUXDB_DB`
-`Ih`  | `INFLUXDB_HOST`
-`Ip`  | `INFLUXDB_PORT`
-`Mmh` | `MESOS_MASTER_HOST`
-`Mmp` | `MESOS_MASTER_PORT`
-`Msh` | `MESOS_SLAVE_HOST`
-`Msp` | `MESOS_SLAVE_PORT`
-`mh`  | `MARATHON_HOST`
-`mp`  | `MARATHON_PORT`
-`d`   | `COLLECTOR_LAPSE`
-`l`   | `COLLECTOR_LIFETIME`
 
 The credentials for the influxdb database are accepted just as env_var (`INFLUXDB_USER` & `INFLUXDB_PWD`)
 
-## Testing environment
+# Grafana dashboards
 
-In order to do a quick test of the collector, you can use one of the available mesos test environments: [playa-mesos](https://github.com/mesosphere/playa-mesos) & [mesoscope](https://github.com/schibsted/mesoscope). The other components can be deployed with public containers. Replace the `$DOCKER_IP` and `$MESOS_HOST` with the correct values. If you are running the mesoscope env, `MESOS_HOST=$DOCKER_IP`. For the playa-mesos option, `MESOS_HOST=10.141.141.10`.
-
-```
-$ docker run --name influxdb -p 8083:8083 -p 8086:8086 \
-    --expose 8090 --expose 8099 \
-    -d tutum/influxdb
-$ docker run --name grafana -p 3000:3000 \
-    -e GF_SERVER_ROOT_URL="http://$DOCKER_IP" \
-    -e GF_SECURITY_ADMIN_PASSWORD=secret \
-    -d grafana/grafana
-$ docker run --name mesos-influxdb-collector \
-    --link influxdb \
-    -e MESOS_HOST=$MESOS_HOST \
-    -it --rm kpacha/mesos-influxdb-collector
-```
-
-The `grafana` folder contains several grafana dashboard definitions. Go to the grafana website (`http://$DOCKER_IP:3000/) and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
+The `fixtures/grafana` folder contains several grafana dashboard definitions. Go to the grafana website and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
