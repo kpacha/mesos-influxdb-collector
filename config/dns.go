@@ -4,17 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/kpacha/mesos-influxdb-collector/reader"
 )
-
-type SRVRecord struct {
-	Host    string `json:"host"`
-	IP      string `json:"ip"`
-	Port    string `json:"port"`
-	Service string `json:"service"`
-}
 
 type ARecord struct {
 	Host string `json:"host"`
@@ -43,35 +35,28 @@ func NewDNSResolver(config *Config) (*DNSResolver, error) {
 }
 
 func (r DNSResolver) resolveMesosMasters() error {
-	body, err := reader.ReadUrl(r.getMesosMasterUrl())
+	leaders, err := r.getARecords(r.getMesosLeaderUrl())
+	if err != nil {
+		return err
+	}
+	masters, err := r.getARecords(r.getMesosMasterUrl())
 	if err != nil {
 		return err
 	}
 
-	var masters []SRVRecord
-	if err = json.Unmarshal(body, &masters); err != nil {
-		return err
-	}
+	log.Println("leaders", leaders)
+	log.Println("masters", masters)
 
 	for _, master := range masters {
-		port, err := strconv.Atoi(master.Port)
-		if err != nil {
-			return err
-		}
-		r.Config.Master = append(r.Config.Master, Master{master.IP, port, true})
+		r.Config.Master = append(r.Config.Master, Master{master.IP, 5050, master.IP == leaders[0].IP})
 	}
 
 	return nil
 }
 
 func (r DNSResolver) resolveMesosSlaves() error {
-	body, err := reader.ReadUrl(r.getMesosSlaveUrl())
+	slaves, err := r.getARecords(r.getMesosSlaveUrl())
 	if err != nil {
-		return err
-	}
-
-	var slaves []ARecord
-	if err = json.Unmarshal(body, &slaves); err != nil {
 		return err
 	}
 
@@ -83,13 +68,8 @@ func (r DNSResolver) resolveMesosSlaves() error {
 }
 
 func (r DNSResolver) resolveMarathon() error {
-	body, err := reader.ReadUrl(r.getMarathonUrl())
+	instances, err := r.getARecords(r.getMarathonUrl())
 	if err != nil {
-		return err
-	}
-
-	var instances []ARecord
-	if err = json.Unmarshal(body, &instances); err != nil {
 		return err
 	}
 
@@ -100,9 +80,23 @@ func (r DNSResolver) resolveMarathon() error {
 	return nil
 }
 
+func (r DNSResolver) getARecords(url string) ([]ARecord, error) {
+	var instances []ARecord
+	body, err := reader.ReadUrl(url)
+	if err != nil {
+		return instances, err
+	}
+
+	err = json.Unmarshal(body, &instances)
+	return instances, err
+}
+
 func (r DNSResolver) getMesosMasterUrl() string {
-	//return r.getUrl("/v1/hosts/master")
-	return r.getUrl("v1/services/_leader._tcp")
+	return r.getUrl("v1/hosts/master")
+}
+
+func (r DNSResolver) getMesosLeaderUrl() string {
+	return r.getUrl("v1/hosts/leader")
 }
 
 func (r DNSResolver) getMesosSlaveUrl() string {
