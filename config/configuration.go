@@ -43,7 +43,7 @@ type InfluxDB struct {
 }
 
 type ConfigParser struct {
-	Path string
+	Path     string
 	AllowDNS bool
 }
 
