@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ConfigPath   = "config.hcl"
+	ConfigPath   = "conf.hcl"
 	InfluxdbUser = "root"
 	InfluxdbPass = "root"
 

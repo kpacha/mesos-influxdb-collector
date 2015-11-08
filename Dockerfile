@@ -12,4 +12,4 @@ RUN make install
 
 ENTRYPOINT ["/go/bin/mesos-influxdb-collector"]
 
-CMD ["-c", "config.hcl"]
+CMD ["-c", "conf.hcl"]
