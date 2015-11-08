@@ -15,10 +15,6 @@ type MultiCollector struct {
 	Collectors []Collector
 }
 
-func NewMultiCollector(collectors []Collector) Collector {
-	return MultiCollector{collectors}
-}
-
 func (mc MultiCollector) Collect() ([]store.Point, error) {
 	var data []store.Point
 	for _, c := range mc.Collectors {

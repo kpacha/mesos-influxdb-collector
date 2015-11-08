@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/kpacha/mesos-influxdb-collector/collector"
+	"github.com/kpacha/mesos-influxdb-collector/config"
 	"github.com/kpacha/mesos-influxdb-collector/store"
 	"log"
 	"os"
@@ -11,71 +12,41 @@ import (
 )
 
 const (
-	InfluxdbHost    = "localhost"
-	InfluxdbPort    = 8086
-	InfluxdbDB      = "mesos"
-	InfluxdbUser    = "root"
-	InfluxdbPass    = "root"
-	MesosMasterHost = "localhost"
-	MesosMasterPort = 5050
-	MesosSlaveHost  = "localhost"
-	MesosSlavePort  = 5051
-	MarathonHost    = "localhost"
-	MarathonPort    = 8080
-	DefaultLapse    = 1
-	DefaultLifeTime = 300
-	DefaultLogLapse = 30
+	ConfigPath   = "conf.hcl"
+	InfluxdbUser = "root"
+	InfluxdbPass = "root"
 
-	InfluxdbEnvName        = "INFLUXDB_HOST"
-	InfluxdbDBEnvName      = "INFLUXDB_DB"
-	InfluxdbPortEnvName    = "INFLUXDB_PORT"
-	InfluxdbUserEnvName    = "INFLUXDB_USER"
-	InfluxdbPassEnvName    = "INFLUXDB_PWD"
-	MesosMasterHostEnvName = "MESOS_MASTER_HOST"
-	MesosMasterPortEnvName = "MESOS_MASTER_PORT"
-	MesosSlaveHostEnvName  = "MESOS_SLAVE_HOST"
-	MesosSlavePortEnvName  = "MESOS_SLAVE_PORT"
-	MarathonHostEnvName    = "MARATHON_HOST"
-	MarathonPortEnvName    = "MARATHON_PORT"
-	LapseEnvName           = "COLLECTOR_LAPSE"
-	LifeTimeEnvName        = "COLLECTOR_LIFETIME"
+	ConfigPathEnvName   = "CONFIG_FILE"
+	InfluxdbUserEnvName = "INFLUXDB_USER"
+	InfluxdbPassEnvName = "INFLUXDB_PWD"
 )
 
 func main() {
-	ihost := flag.String("Ih", getStringParam(InfluxdbEnvName, InfluxdbHost), "influxdb host")
-	iport := flag.Int("Ip", getIntParam(InfluxdbPortEnvName, InfluxdbPort), "influxdb port")
-	idb := flag.String("Id", getStringParam(InfluxdbDBEnvName, InfluxdbDB), "influxdb database")
-	mmhost := flag.String("Mmh", getStringParam(MesosMasterHostEnvName, MesosMasterHost), "mesos master host")
-	mmport := flag.Int("Mmp", getIntParam(MesosMasterPortEnvName, MesosMasterPort), "mesos master port")
-	mshost := flag.String("Msh", getStringParam(MesosSlaveHostEnvName, MesosSlaveHost), "mesos slave host")
-	msport := flag.Int("Msp", getIntParam(MesosSlavePortEnvName, MesosSlavePort), "mesos slave port")
-	marathonHost := flag.String("mh", getStringParam(MarathonHostEnvName, MarathonHost), "marathon host")
-	marathonPort := flag.Int("mp", getIntParam(MarathonPortEnvName, MarathonPort), "marathon port")
-	lapse := flag.Int("l", getIntParam(LapseEnvName, DefaultLapse), "sleep time between collections in seconds")
-	dieAfter := flag.Int("d", getIntParam(LifeTimeEnvName, DefaultLifeTime), "die after N seconds")
+	configPath := flag.String("c", ConfigPath, "path to the config file")
 	flag.Parse()
 
-	influxdb := store.NewInfluxdb(store.InfluxdbConfig{
-		Host:       *ihost,
-		Port:       *iport,
-		DB:         *idb,
-		Username:   getStringParam(InfluxdbUserEnvName, InfluxdbUser),
-		Password:   getStringParam(InfluxdbPassEnvName, InfluxdbPass),
-		CheckLapse: DefaultLogLapse,
-	})
+	cp := config.ConfigParser{
+		Path:     *configPath,
+		AllowDNS: true,
+	}
 
-	col := collector.NewMultiCollector(
-		[]collector.Collector{
-			NewMesosMasterCollector(*mmhost, *mmport),
-			NewMesosSlaveCollector(*mshost, *msport),
-			NewMarathonCollector(*marathonHost, *marathonPort),
-		})
+	conf, err := cp.Parse()
+	if err != nil {
+		log.Println("Error parsing config file:", err.Error())
+		return
+	}
+	col := collector.NewCollectorFromConfig(conf)
 
-	subscription := NewCollectorSubscription(lapse, &col, &influxdb)
+	influxdb := store.NewInfluxdbFromConfig(
+		conf,
+		getStringParam(InfluxdbUserEnvName, InfluxdbUser),
+		getStringParam(InfluxdbPassEnvName, InfluxdbPass))
 
-	go report(&subscription)
+	subscription := NewCollectorSubscription(&conf.Lapse, &col, &influxdb)
 
-	time.Sleep(time.Second * time.Duration(*dieAfter))
+	go report(&subscription, conf.InfluxDB.CheckLapse)
+
+	time.Sleep(time.Second * time.Duration(conf.DieAfter))
 	subscription.Cancel()
 
 	log.Println("Mesos collector stopped")
@@ -98,8 +69,8 @@ func getIntParam(envName string, defaultValue int) int {
 	return env
 }
 
-func report(subscription *Subscription) {
-	ticker := time.NewTicker(time.Second * time.Duration(DefaultLogLapse))
+func report(subscription *Subscription, lapse int) {
+	ticker := time.NewTicker(time.Second * time.Duration(lapse))
 	var collects int
 	for _ = range ticker.C {
 		collects = <-subscription.Stats
