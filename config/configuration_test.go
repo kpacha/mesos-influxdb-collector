@@ -5,12 +5,12 @@ import (
 )
 
 func ExampleParseMaster() {
-	txtConfig := `Master {
+	txtConfig := `Master "leader" {
 		host = "localhost"
 		port = 5051
 		leader = true
 	}
-	Master {
+	Master "follower" {
 		host = "localhost"
 		port = 5052
 	}
@@ -35,11 +35,11 @@ func ExampleParseMaster() {
 }
 
 func ExampleParseSlave() {
-	txtConfig := `Slave {
+	txtConfig := `Slave "0" {
 		host = "localhost"
 		port = 5051
 	}
-	Slave {
+	slave "1" {
 		host = "localhost"
 		port = 5052
 	}
@@ -69,11 +69,11 @@ func ExampleParseMarathon() {
 		host = "localhost"
 		port = 8088
 		bufferSize = 10000
-		Server {
+		Server "0" {
 			host = "marathon1"
 			port = 8080
 		}
-		Server {
+		Server "1" {
 			host = "marathon2"
 			port = 8080
 		}

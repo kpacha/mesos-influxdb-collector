@@ -27,7 +27,7 @@ func ExampleCollectorFromConfig() {
 	cp := config.ConfigParser{}
 	c, err := cp.ParseConfig(txtConfig)
 	if err != nil {
-		fmt.Printf("Error parsing the config:", err.Error())
+		fmt.Println("Error parsing the config:", err.Error())
 	}
 	collector := NewCollectorFromConfig(c)
 	fmt.Println(collector)
