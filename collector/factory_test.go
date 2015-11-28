@@ -2,6 +2,7 @@ package collector
 
 import (
 	"fmt"
+
 	"github.com/kpacha/mesos-influxdb-collector/config"
 )
 
@@ -14,6 +15,9 @@ func ExampleCollectorFromConfig() {
 	Master {
 		host = "localhost"
 		port = 15050
+	}
+	Marathon {
+		port = 8080
 	}
 	Slave {
 		host = "localhost"
@@ -29,5 +33,5 @@ func ExampleCollectorFromConfig() {
 	fmt.Println(collector)
 
 	// Output:
-	// {[{http://localhost:5050/metrics/snapshot {localhost true}} {http://localhost:15050/metrics/snapshot {localhost false}} {http://localhost:5051/metrics/snapshot {localhost}} {http://localhost:5052/metrics/snapshot {localhost}}]}
+	// {[{http://localhost:5050/metrics/snapshot {localhost true}} {http://localhost:15050/metrics/snapshot {localhost false}} {http://localhost:5051/metrics/snapshot {localhost}} {http://localhost:5052/metrics/snapshot {localhost}} {0xc820074480}]}
 }
