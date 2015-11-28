@@ -10,5 +10,8 @@ influxdb {
 	db = "mesos"
 	checkLapse = 30
 }
+marathon {
+	port = 8080
+}
 lapse=5
 dieAfter = 300
