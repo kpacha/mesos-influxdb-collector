@@ -20,9 +20,7 @@ func NewCollectorFromConfig(configuration *config.Config) Collector {
 		collectors = append(collectors, NewMesosSlaveCollector(slave.Host, slave.Port))
 	}
 	if configuration.Marathon != nil {
-		for _, marathonInstance := range configuration.Marathon.Server {
-			collectors = append(collectors, NewMarathonCollector(marathonInstance.Host, marathonInstance.Port))
-		}
+		collectors = append(collectors, NewMarathonCollectors(configuration.Marathon)...)
 	}
 
 	log.Println("Total collectors created:", len(collectors))
@@ -54,10 +52,18 @@ func NewMesosSlaveCollector(host string, port int) Collector {
 	return UrlCollector{Url: u.String(), Parser: mesos.SlaveParser{Node: host}}
 }
 
-func NewMarathonCollector(host string, port int) Collector {
+func NewMarathonCollectors(configuration *config.Marathon) []Collector {
+	collectors := []Collector{NewMarathonEventsCollector(configuration, marathon.MarathonEventsParser{})}
+	for _, marathonInstance := range configuration.Server {
+		collectors = append(collectors, NewMarathonStatsCollector(marathonInstance.Host, marathonInstance.Port))
+	}
+	return collectors
+}
+
+func NewMarathonStatsCollector(host string, port int) Collector {
 	u, err := url.Parse(fmt.Sprintf("http://%s:%d/metrics", host, port))
 	if err != nil {
 		log.Fatal("Error building the marathon collector:", err)
 	}
-	return UrlCollector{Url: u.String(), Parser: marathon.MarathonParser{Node: host}}
+	return UrlCollector{Url: u.String(), Parser: marathon.MarathonStatsParser{Node: host}}
 }
