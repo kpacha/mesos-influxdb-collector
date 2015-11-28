@@ -7,31 +7,31 @@ import (
 )
 
 func ExampleCollectorFromConfig() {
-	txtConfig := `Master {
+	txtConfig := `master "leader" {
 		host = "localhost"
 		port = 5050
 		leader = true
 	}
-	Master {
+	master "follower" {
 		host = "localhost"
 		port = 15050
 	}
-	Marathon {
-		port = 8080
-	}
-	Slave {
+	slave "0" {
 		host = "localhost"
 		port = 5051
 	}
-	Slave {
+	slave "1" {
 		host = "localhost"
 		port = 5052
 	}`
 	cp := config.ConfigParser{}
-	c, _ := cp.ParseConfig(txtConfig)
+	c, err := cp.ParseConfig(txtConfig)
+	if err != nil {
+		fmt.Printf("Error parsing the config:", err.Error())
+	}
 	collector := NewCollectorFromConfig(c)
 	fmt.Println(collector)
 
 	// Output:
-	// {[{http://localhost:5050/metrics/snapshot {localhost true}} {http://localhost:15050/metrics/snapshot {localhost false}} {http://localhost:5051/metrics/snapshot {localhost}} {http://localhost:5052/metrics/snapshot {localhost}} {0xc820074480}]}
+	// {[{http://localhost:5050/metrics/snapshot {localhost true}} {http://localhost:15050/metrics/snapshot {localhost false}} {http://localhost:5051/metrics/snapshot {localhost}} {http://localhost:5052/metrics/snapshot {localhost}}]}
 }

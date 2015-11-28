@@ -9,8 +9,8 @@ import (
 
 type Config struct {
 	MesosDNS *MesosDNS
-	Master   []Master
-	Slave    []Server
+	Master   []Master `hcl:"master,expand"`
+	Slave    []Server `hcl:"slave,expand"`
 	Marathon *Marathon
 	InfluxDB *InfluxDB
 	Lapse    int
@@ -30,7 +30,7 @@ type Server struct {
 }
 
 type Marathon struct {
-	Server     []Server
+	Server     []Server `hcl:"server,expand"`
 	Host       string
 	Port       int
 	BufferSize int
