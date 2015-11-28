@@ -10,4 +10,3 @@ go:
 
 install:
   - make
-  - go vet
