@@ -2,11 +2,12 @@ package collector
 
 import (
 	"fmt"
+	"log"
+	"net/url"
+
 	"github.com/kpacha/mesos-influxdb-collector/config"
 	"github.com/kpacha/mesos-influxdb-collector/parser/marathon"
 	"github.com/kpacha/mesos-influxdb-collector/parser/mesos"
-	"log"
-	"net/url"
 )
 
 func NewCollectorFromConfig(configuration *config.Config) Collector {
@@ -18,8 +19,10 @@ func NewCollectorFromConfig(configuration *config.Config) Collector {
 	for _, slave := range configuration.Slave {
 		collectors = append(collectors, NewMesosSlaveCollector(slave.Host, slave.Port))
 	}
-	for _, marathonInstance := range configuration.Marathon {
-		collectors = append(collectors, NewMarathonCollector(marathonInstance.Host, marathonInstance.Port))
+	if configuration.Marathon != nil {
+		for _, marathonInstance := range configuration.Marathon.Server {
+			collectors = append(collectors, NewMarathonCollector(marathonInstance.Host, marathonInstance.Port))
+		}
 	}
 
 	log.Println("Total collectors created:", len(collectors))

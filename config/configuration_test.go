@@ -28,7 +28,7 @@ func ExampleParseMaster() {
 	// <nil>
 	// [{localhost 5051 true} {localhost 5052 false}]
 	// []
-	// []
+	// <nil>
 	// &{localhost 8086 mesos 30}
 	// 30
 	// 1
@@ -58,7 +58,7 @@ func ExampleParseSlave() {
 	// <nil>
 	// []
 	// [{localhost 5051} {localhost 5052}]
-	// []
+	// <nil>
 	// &{localhost 8086 mesos 30}
 	// 100
 	// 1
@@ -67,11 +67,16 @@ func ExampleParseSlave() {
 func ExampleParseMarathon() {
 	txtConfig := `Marathon {
 		host = "localhost"
-		port = 5051
-	}
-	Marathon {
-		host = "localhost"
-		port = 5052
+		port = 8088
+		bufferSize = 10000
+		Server {
+			host = "marathon1"
+			port = 8080
+		}
+		Server {
+			host = "marathon2"
+			port = 8080
+		}
 	}
 	DieAfter = 1`
 	cp := ConfigParser{}
@@ -87,7 +92,7 @@ func ExampleParseMarathon() {
 	// <nil>
 	// []
 	// []
-	// [{localhost 5051} {localhost 5052}]
+	// &{[{marathon1 8080} {marathon2 8080}] localhost 8088 10000}
 	// &{localhost 8086 mesos 30}
 	// 30
 	// 1
@@ -112,7 +117,7 @@ func ExampleParseInfluxDB() {
 	// <nil>
 	// []
 	// []
-	// []
+	// <nil>
 	// &{influx 18086 custom 30}
 	// 30
 	// 3600

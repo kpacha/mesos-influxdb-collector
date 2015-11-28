@@ -74,7 +74,7 @@ func (r DNSResolver) resolveMarathon() error {
 	}
 
 	for _, instance := range instances {
-		r.Config.Marathon = append(r.Config.Marathon, Server{instance.IP, 8080})
+		r.Config.Marathon.Server = append(r.Config.Marathon.Server, Server{instance.IP, 8080})
 	}
 
 	return nil

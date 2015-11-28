@@ -1,17 +1,17 @@
 package config
 
 import (
+	"io/ioutil"
 	"log"
 
 	"github.com/hashicorp/hcl"
-	"io/ioutil"
 )
 
 type Config struct {
 	MesosDNS *MesosDNS
 	Master   []Master
 	Slave    []Server
-	Marathon []Server
+	Marathon *Marathon
 	InfluxDB *InfluxDB
 	Lapse    int
 	DieAfter int
@@ -27,6 +27,13 @@ type MesosDNS struct {
 type Server struct {
 	Host string
 	Port int
+}
+
+type Marathon struct {
+	Server     []Server
+	Host       string
+	Port       int
+	BufferSize int
 }
 
 type Master struct {
