@@ -132,6 +132,14 @@ Check [`config/configuration_test.go`](https://github.com/kpacha/mesos-influxdb-
 
 # Running
 
+The collector use these environmental vars:
+
++ `INFLUXDB_DB`
++ `INFLUXDB_HOST`
++ `INFLUXDB_PORT`
++ `INFLUXDB_USER`
++ `INFLUXDB_PWD`
+
 ## Dockerized version
 
 Run the container with the default params:
@@ -143,7 +151,11 @@ $ docker pull --name mesos-influxdb-collector \
     -it --rm kpacha/mesos-influxdb-collector
 ```
 
-If you need to customize something, copy the `conf.hcl`, make your changes and link it as a volume:
+If you need to customize something, there are some alternatives:
+
+### 1: Config file
+
+Just copy the `conf.hcl`, make your changes and link it as a volume:
 
 ```
 $ docker pull --name mesos-influxdb-collector \
@@ -153,14 +165,49 @@ $ docker pull --name mesos-influxdb-collector \
 
 Tip: if you link your config file to `/go/src/github.com/kpacha/mesos-influxdb-collector/conf.hcl` you don't need to worry about that flag!
 
+### 2: ENV VARS
+
+Use the env vars listed above
+
+```
+$ docker pull --name mesos-influxdb-collector \
+    -v /path/to/my/custom/conf.hcl:/tmp/conf.hcl \
+    -e INFLUXDB_HOST=influxdb.example.com \
+    -it --rm kpacha/mesos-influxdb-collector -c /tmp/conf.hcl
+```
+
+### 3: Flags
+
+Use the flags accepted by the binary and defined below. Remeber to set them as commands to the defined entrypoint for the docker container.
+
+```
+$ docker pull --name mesos-influxdb-collector \
+    -v /path/to/my/custom/conf.hcl:/tmp/conf.hcl \
+    -it --rm kpacha/mesos-influxdb-collector -c "/tmp/conf.hcl" -Ih "influxdb.example.com"
+```
+
 ## Binary version
 
 ```
 $ ./mesos-influxdb-collector -h
 Usage of ./mesos-influxdb-collector:
+  -Id string
+      influxdb database (default "mesos")
+  -Ih string
+      influxdb host (default "localhost")
+  -Ip int
+      influxdb port (default 8086)
   -c string
       path to the config file (default "conf.hcl")
 ```
+
+This is the relation between those params and the environmnetal variables listed above.
+
+Flag  | EnvVar
+----  | ------
+`Id`  | `INFLUXDB_DB`
+`Ih`  | `INFLUXDB_HOST`
+`Ip`  | `INFLUXDB_PORT`
 
 The credentials for the influxdb database are accepted just as env_var (`INFLUXDB_USER` & `INFLUXDB_PWD`)
 
