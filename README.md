@@ -116,6 +116,7 @@ For manual definition of some (or all) marathon instances, use the `Marathon` st
 Marathon {
   host = "$HOST"
   port = 8088
+  events = true
   bufferSize = 10000
   Server "0" {
     host = "marathon1"
