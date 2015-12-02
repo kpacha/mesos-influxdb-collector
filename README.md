@@ -16,11 +16,15 @@ Since this collector is intended to be deployed as a [marathon](https://mesosphe
 
 # Installing
 
-Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/mesos-influxdb-collector). Just pull the latest image available with:
+Docker images are available at [docker hub](https://hub.docker.com/r/kpacha/mesos-influxdb-collector). Just pull one of the available images with:
 
 ```
-$ docker pull kpacha/mesos-influxdb-collector:latest
+$ docker pull kpacha/mesos-influxdb-collector:latest-min
 ```
+
+The `-min` versions are images with just the binary and a config file.
+
+**Be careful with the `latest` and the `latest-min` versions. They could have experimental features, not battle-proven yet**
 
 Alternatively, get the last released binary from the [releases](https://github.com/kpacha/mesos-influxdb-collector/releases) section.
 
