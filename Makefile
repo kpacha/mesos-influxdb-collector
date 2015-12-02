@@ -1,8 +1,8 @@
 all: deps build test
 
 deps:
-	go get github.com/hashicorp/hcl
-	go get github.com/influxdb/influxdb/client
+	go get -v github.com/hashicorp/hcl
+	go get -v github.com/influxdb/influxdb/client
 
 gen:
 	go fmt ./...
@@ -21,4 +21,4 @@ test:
 
 docker:
 	docker run --rm -it -e "GOPATH=/go" -v "${PWD}:/go/src/github.com/kpacha/mesos-influxdb-collector" -w /go/src/github.com/kpacha/mesos-influxdb-collector golang:1.5.1 make
-	docker build -f Dockerfile-min -t kpacha/mesos-influxdb-collector:mesos-dns-min .
+	docker build -f Dockerfile-min -t kpacha/mesos-influxdb-collector:latest-min .
