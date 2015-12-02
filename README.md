@@ -78,13 +78,13 @@ influxdb {
 For manual definition of some (or all) mesos masters, use the `Master` struct:
 
 ```
-Master {
-  host = "localhost"
+master "leader" {
+  host = "master0.example.com"
   port = 5051
   leader = true // optional
 }
-Master {
-  host = "localhost"
+Master "follower1" {
+  host = "master1.example.com"
   port = 5052
 }
 ```
@@ -94,8 +94,16 @@ Master {
 For manual definition of some (or all) mesos slave, use the `Slave` struct:
 
 ```
-Slave {
-  host = "localhost"
+Slave "0" {
+  host = "slave0.example.com"
+  port = 5051
+}
+Slave "1" {
+  host = "slave1.example.com"
+  port = 5051
+}
+Slave "2" {
+  host = "slave2.example.com"
   port = 5051
 }
 ```
@@ -106,8 +114,17 @@ For manual definition of some (or all) marathon instances, use the `Marathon` st
 
 ```
 Marathon {
-  host = "localhost"
-  port = 5052
+  host = "$HOST"
+  port = 8088
+  bufferSize = 10000
+  Server "0" {
+    host = "marathon1"
+    port = 8080
+  }
+  Server "1" {
+    host = "marathon2"
+    port = 8080
+  }
 }
 ```
 

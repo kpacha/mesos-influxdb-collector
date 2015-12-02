@@ -2,29 +2,33 @@ package collector
 
 import (
 	"fmt"
+
 	"github.com/kpacha/mesos-influxdb-collector/config"
 )
 
 func ExampleCollectorFromConfig() {
-	txtConfig := `Master {
+	txtConfig := `master "leader" {
 		host = "localhost"
 		port = 5050
 		leader = true
 	}
-	Master {
+	master "follower" {
 		host = "localhost"
 		port = 15050
 	}
-	Slave {
+	slave "0" {
 		host = "localhost"
 		port = 5051
 	}
-	Slave {
+	slave "1" {
 		host = "localhost"
 		port = 5052
 	}`
 	cp := config.ConfigParser{}
-	c, _ := cp.ParseConfig(txtConfig)
+	c, err := cp.ParseConfig(txtConfig)
+	if err != nil {
+		fmt.Println("Error parsing the config:", err.Error())
+	}
 	collector := NewCollectorFromConfig(c)
 	fmt.Println(collector)
 

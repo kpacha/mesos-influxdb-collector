@@ -2,18 +2,19 @@ package marathon
 
 import (
 	"encoding/json"
-	"github.com/kpacha/mesos-influxdb-collector/store"
 	"io"
 	"io/ioutil"
 	"log"
 	"time"
+
+	"github.com/kpacha/mesos-influxdb-collector/store"
 )
 
-type MarathonParser struct {
+type MarathonStatsParser struct {
 	Node string
 }
 
-func (mp MarathonParser) Parse(r io.ReadCloser) ([]store.Point, error) {
+func (mp MarathonStatsParser) Parse(r io.ReadCloser) ([]store.Point, error) {
 	defer r.Close()
 	var stats MarathonStats
 	body, err := ioutil.ReadAll(r)
@@ -30,7 +31,7 @@ func (mp MarathonParser) Parse(r io.ReadCloser) ([]store.Point, error) {
 	return mp.getMarathonPoints(stats), nil
 }
 
-func (mp MarathonParser) getMarathonPoints(stats MarathonStats) []store.Point {
+func (mp MarathonStatsParser) getMarathonPoints(stats MarathonStats) []store.Point {
 	return []store.Point{
 		mp.getCounterPoint(stats),
 		mp.getGaugePoint(stats),
@@ -42,7 +43,7 @@ func (mp MarathonParser) getMarathonPoints(stats MarathonStats) []store.Point {
 	}
 }
 
-func (mp MarathonParser) getCounterPoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getCounterPoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-servlet-context",
 		Tags: map[string]string{
@@ -60,7 +61,7 @@ func (mp MarathonParser) getCounterPoint(stats MarathonStats) store.Point {
 	}
 }
 
-func (mp MarathonParser) getGaugePoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getGaugePoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-error",
 		Tags: map[string]string{
@@ -78,7 +79,7 @@ func (mp MarathonParser) getGaugePoint(stats MarathonStats) store.Point {
 	}
 }
 
-func (mp MarathonParser) getRequestTimePoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getRequestTimePoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-request-time",
 		Tags: map[string]string{
@@ -98,7 +99,7 @@ func (mp MarathonParser) getRequestTimePoint(stats MarathonStats) store.Point {
 	}
 }
 
-func (mp MarathonParser) getDataSizePoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getDataSizePoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-data-size",
 		Tags: map[string]string{
@@ -118,7 +119,7 @@ func (mp MarathonParser) getDataSizePoint(stats MarathonStats) store.Point {
 	}
 }
 
-func (mp MarathonParser) getRequestPoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getRequestPoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-request",
 		Tags: map[string]string{
@@ -139,7 +140,7 @@ func (mp MarathonParser) getRequestPoint(stats MarathonStats) store.Point {
 	}
 }
 
-func (mp MarathonParser) getRequestErrorPoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getRequestErrorPoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-request-error",
 		Tags: map[string]string{
@@ -159,7 +160,7 @@ func (mp MarathonParser) getRequestErrorPoint(stats MarathonStats) store.Point {
 	}
 }
 
-func (mp MarathonParser) getResponsePoint(stats MarathonStats) store.Point {
+func (mp MarathonStatsParser) getResponsePoint(stats MarathonStats) store.Point {
 	return store.Point{
 		Measurement: "marathon-request-error",
 		Tags: map[string]string{

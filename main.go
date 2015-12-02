@@ -2,32 +2,51 @@ package main
 
 import (
 	"flag"
-	"github.com/kpacha/mesos-influxdb-collector/collector"
-	"github.com/kpacha/mesos-influxdb-collector/config"
-	"github.com/kpacha/mesos-influxdb-collector/store"
 	"log"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/kpacha/mesos-influxdb-collector/collector"
+	"github.com/kpacha/mesos-influxdb-collector/config"
+	"github.com/kpacha/mesos-influxdb-collector/store"
 )
 
 const (
 	ConfigPath   = "conf.hcl"
+	InfluxdbHost = "localhost"
+	InfluxdbPort = 8086
+	InfluxdbDB   = "mesos"
 	InfluxdbUser = "root"
 	InfluxdbPass = "root"
 
+	InfluxdbEnvName     = "INFLUXDB_HOST"
+	InfluxdbDBEnvName   = "INFLUXDB_DB"
+	InfluxdbPortEnvName = "INFLUXDB_PORT"
 	ConfigPathEnvName   = "CONFIG_FILE"
 	InfluxdbUserEnvName = "INFLUXDB_USER"
 	InfluxdbPassEnvName = "INFLUXDB_PWD"
 )
 
 func main() {
+	ihost := flag.String("Ih", getStringParam(InfluxdbEnvName, InfluxdbHost), "influxdb host")
+	iport := flag.Int("Ip", getIntParam(InfluxdbPortEnvName, InfluxdbPort), "influxdb port")
+	idb := flag.String("Id", getStringParam(InfluxdbDBEnvName, InfluxdbDB), "influxdb database")
 	configPath := flag.String("c", ConfigPath, "path to the config file")
 	flag.Parse()
+
+	defaultConfig := *config.DefaultConfig
+	defaultConfig.InfluxDB = &config.InfluxDB{
+		Host:       *ihost,
+		Port:       *iport,
+		DB:         *idb,
+		CheckLapse: config.DefaultConfig.InfluxDB.CheckLapse,
+	}
 
 	cp := config.ConfigParser{
 		Path:     *configPath,
 		AllowDNS: true,
+		Default:  &defaultConfig,
 	}
 
 	conf, err := cp.Parse()

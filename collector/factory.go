@@ -2,11 +2,12 @@ package collector
 
 import (
 	"fmt"
+	"log"
+	"net/url"
+
 	"github.com/kpacha/mesos-influxdb-collector/config"
 	"github.com/kpacha/mesos-influxdb-collector/parser/marathon"
 	"github.com/kpacha/mesos-influxdb-collector/parser/mesos"
-	"log"
-	"net/url"
 )
 
 func NewCollectorFromConfig(configuration *config.Config) Collector {
@@ -18,8 +19,8 @@ func NewCollectorFromConfig(configuration *config.Config) Collector {
 	for _, slave := range configuration.Slave {
 		collectors = append(collectors, NewMesosSlaveCollector(slave.Host, slave.Port))
 	}
-	for _, marathonInstance := range configuration.Marathon {
-		collectors = append(collectors, NewMarathonCollector(marathonInstance.Host, marathonInstance.Port))
+	if configuration.Marathon != nil {
+		collectors = append(collectors, NewMarathonCollectors(configuration.Marathon)...)
 	}
 
 	log.Println("Total collectors created:", len(collectors))
@@ -51,10 +52,24 @@ func NewMesosSlaveCollector(host string, port int) Collector {
 	return UrlCollector{Url: u.String(), Parser: mesos.SlaveParser{Node: host}}
 }
 
-func NewMarathonCollector(host string, port int) Collector {
+func NewMarathonCollectors(configuration *config.Marathon) []Collector {
+	if configuration.Server == nil {
+		return []Collector{}
+	}
+	collectors := []Collector{}
+	if configuration.Events {
+		collectors = append(collectors, NewMarathonEventsCollector(configuration, marathon.MarathonEventsParser{}))
+	}
+	for _, marathonInstance := range configuration.Server {
+		collectors = append(collectors, NewMarathonStatsCollector(marathonInstance.Host, marathonInstance.Port))
+	}
+	return collectors
+}
+
+func NewMarathonStatsCollector(host string, port int) Collector {
 	u, err := url.Parse(fmt.Sprintf("http://%s:%d/metrics", host, port))
 	if err != nil {
 		log.Fatal("Error building the marathon collector:", err)
 	}
-	return UrlCollector{Url: u.String(), Parser: marathon.MarathonParser{Node: host}}
+	return UrlCollector{Url: u.String(), Parser: marathon.MarathonStatsParser{Node: host}}
 }

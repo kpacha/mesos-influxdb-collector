@@ -1,17 +1,17 @@
 package config
 
 import (
+	"io/ioutil"
 	"log"
 
 	"github.com/hashicorp/hcl"
-	"io/ioutil"
 )
 
 type Config struct {
 	MesosDNS *MesosDNS
-	Master   []Master
-	Slave    []Server
-	Marathon []Server
+	Master   []Master `hcl:"master,expand"`
+	Slave    []Server `hcl:"slave,expand"`
+	Marathon *Marathon
 	InfluxDB *InfluxDB
 	Lapse    int
 	DieAfter int
@@ -27,6 +27,14 @@ type MesosDNS struct {
 type Server struct {
 	Host string
 	Port int
+}
+
+type Marathon struct {
+	Server     []Server `hcl:"server,expand"`
+	Events     bool
+	Host       string
+	Port       int
+	BufferSize int
 }
 
 type Master struct {
@@ -45,7 +53,16 @@ type InfluxDB struct {
 type ConfigParser struct {
 	Path     string
 	AllowDNS bool
+	Default  *Config
 }
+
+var (
+	DefaultConfig = &Config{
+		InfluxDB: &InfluxDB{"localhost", 8086, "mesos", 30},
+		Lapse:    30,
+		DieAfter: 3600,
+	}
+)
 
 func (cp ConfigParser) Parse() (*Config, error) {
 	return cp.ParseConfigFile(cp.Path)
@@ -61,33 +78,35 @@ func (cp ConfigParser) ParseConfigFile(file string) (*Config, error) {
 }
 
 func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
-	result := &Config{}
+	var tmp Config
+	if cp.Default != nil {
+		tmp = *cp.Default
+	} else {
+		tmp = *DefaultConfig
+	}
+	err := cp.UpdateConfig(hclText, &tmp)
+	return &tmp, err
+}
 
-	if err := hcl.Decode(&result, hclText); err != nil {
-		return nil, err
-	}
-
-	if result.Lapse == 0 {
-		result.Lapse = 30
-	}
-	if result.DieAfter == 0 {
-		result.DieAfter = 3600
-	}
-
-	if result.InfluxDB == nil {
-		result.InfluxDB = &InfluxDB{"localhost", 8086, "mesos", 30}
-	}
-	if result.InfluxDB.CheckLapse == 0 {
-		result.InfluxDB.CheckLapse = 30
+func (cp ConfigParser) UpdateConfig(hclText string, result *Config) error {
+	var tmp Config
+	tmp = *result
+	if err := hcl.Decode(&tmp, hclText); err != nil {
+		return err
 	}
 
-	if cp.AllowDNS && result.MesosDNS != nil {
-		if _, err := NewDNSResolver(result); err != nil {
-			return nil, err
+	if tmp.InfluxDB.CheckLapse == 0 {
+		tmp.InfluxDB.CheckLapse = DefaultConfig.InfluxDB.CheckLapse
+	}
+
+	if cp.AllowDNS && tmp.MesosDNS != nil {
+		if _, err := NewDNSResolver(&tmp); err != nil {
+			return err
 		}
 	}
 
-	log.Printf("%+v\n", result)
+	log.Printf("%+v\n", tmp)
+	*result = tmp
 
-	return result, nil
+	return nil
 }
