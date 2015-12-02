@@ -12,6 +12,7 @@ Since this collector is intended to be deployed as a [marathon](https://mesosphe
 + Collect the mesos master stats
 + Collect the mesos slave stats
 + Collect the marathon master stats
++ Collect the marathon events (experimental)
 + Collect the chronos task stats (TODO)
 
 # Installing
