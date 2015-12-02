@@ -44,6 +44,9 @@ The `mesos-influxdb-collector` is able to discover all your mesos nodes (masters
 
 The collector use these environmental vars:
 
++ `INFLUXDB_HOST`
++ `INFLUXDB_PORT`
++ `INFLUXDB_DB`
 + `INFLUXDB_USER`
 + `INFLUXDB_PWD`
 
