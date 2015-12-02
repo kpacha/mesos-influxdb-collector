@@ -56,7 +56,10 @@ func NewMarathonCollectors(configuration *config.Marathon) []Collector {
 	if configuration.Server == nil {
 		return []Collector{}
 	}
-	collectors := []Collector{NewMarathonEventsCollector(configuration, marathon.MarathonEventsParser{})}
+	collectors := []Collector{}
+	if configuration.Events {
+		collectors = append(collectors, NewMarathonEventsCollector(configuration, marathon.MarathonEventsParser{}))
+	}
 	for _, marathonInstance := range configuration.Server {
 		collectors = append(collectors, NewMarathonStatsCollector(marathonInstance.Host, marathonInstance.Port))
 	}

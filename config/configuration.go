@@ -31,6 +31,7 @@ type Server struct {
 
 type Marathon struct {
 	Server     []Server `hcl:"server,expand"`
+	Events     bool
 	Host       string
 	Port       int
 	BufferSize int

@@ -66,6 +66,38 @@ func ExampleParseSlave() {
 
 func ExampleParseMarathon() {
 	txtConfig := `Marathon {
+		Server "0" {
+			host = "marathon1"
+			port = 8080
+		}
+		Server "1" {
+			host = "marathon2"
+			port = 8080
+		}
+	}
+	DieAfter = 1`
+	cp := ConfigParser{}
+	c, _ := cp.ParseConfig(txtConfig)
+	fmt.Println(c.MesosDNS)
+	fmt.Println(c.Master)
+	fmt.Println(c.Slave)
+	fmt.Println(c.Marathon)
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	// Output:
+	// <nil>
+	// []
+	// []
+	// &{[{marathon1 8080} {marathon2 8080}] false  0 0}
+	// &{localhost 8086 mesos 30}
+	// 30
+	// 1
+}
+
+func ExampleParseMarathonWithEvents() {
+	txtConfig := `Marathon {
+		events = true
 		host = "localhost"
 		port = 8088
 		bufferSize = 10000
@@ -92,7 +124,7 @@ func ExampleParseMarathon() {
 	// <nil>
 	// []
 	// []
-	// &{[{marathon1 8080} {marathon2 8080}] localhost 8088 10000}
+	// &{[{marathon1 8080} {marathon2 8080}] true localhost 8088 10000}
 	// &{localhost 8086 mesos 30}
 	// 30
 	// 1
