@@ -1,7 +1,7 @@
 mesosDNS {
 	domain = "mesos"
 	marathon = true
-	host = "master.mesos"
+	host = "slave.mesos"
 	port = 8123
 }
 influxdb {
