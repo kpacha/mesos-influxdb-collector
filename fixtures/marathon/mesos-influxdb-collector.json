@@ -6,13 +6,11 @@
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "kpacha/mesos-influxdb-collector"
+      "image": "kpacha/mesos-influxdb-collector:latest-min"
     }
   },
   "env": {
-    "MESOS_HOST": "10.141.141.10",
     "INFLUXDB_HOST": "192.168.59.103",
-    "COLLECTOR_LIFETIME": "300"
   },
   "constraints": [
     ["hostname", "UNIQUE"]
