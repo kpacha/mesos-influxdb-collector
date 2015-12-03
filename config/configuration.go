@@ -57,6 +57,8 @@ type ConfigParser struct {
 }
 
 var (
+	EmptyString   = ""
+	EmptyInt      = -1
 	DefaultConfig = &Config{
 		InfluxDB: &InfluxDB{"localhost", 8086, "mesos", 30},
 		Lapse:    30,
@@ -109,4 +111,23 @@ func (cp ConfigParser) UpdateConfig(hclText string, result *Config) error {
 	*result = tmp
 
 	return nil
+}
+
+func (cp ConfigParser) ParseAndMerge(ihost *string, iport *int, idb *string) (*Config, error) {
+	conf, err := cp.Parse()
+	if err != nil {
+		return nil, err
+	}
+
+	if *ihost != EmptyString {
+		conf.InfluxDB.Host = *ihost
+	}
+	if *iport != EmptyInt {
+		conf.InfluxDB.Port = *iport
+	}
+	if *idb != EmptyString {
+		conf.InfluxDB.DB = *idb
+	}
+
+	return conf, nil
 }

@@ -14,9 +14,6 @@ import (
 
 const (
 	ConfigPath   = "conf.hcl"
-	InfluxdbHost = "localhost"
-	InfluxdbPort = 8086
-	InfluxdbDB   = "mesos"
 	InfluxdbUser = "root"
 	InfluxdbPass = "root"
 
@@ -29,27 +26,18 @@ const (
 )
 
 func main() {
-	ihost := flag.String("Ih", getStringParam(InfluxdbEnvName, InfluxdbHost), "influxdb host")
-	iport := flag.Int("Ip", getIntParam(InfluxdbPortEnvName, InfluxdbPort), "influxdb port")
-	idb := flag.String("Id", getStringParam(InfluxdbDBEnvName, InfluxdbDB), "influxdb database")
+	ihost := flag.String("Ih", getStringParam(InfluxdbEnvName, config.EmptyString), "influxdb host")
+	iport := flag.Int("Ip", getIntParam(InfluxdbPortEnvName, config.EmptyInt), "influxdb port")
+	idb := flag.String("Id", getStringParam(InfluxdbDBEnvName, config.EmptyString), "influxdb database")
 	configPath := flag.String("c", ConfigPath, "path to the config file")
 	flag.Parse()
-
-	defaultConfig := *config.DefaultConfig
-	defaultConfig.InfluxDB = &config.InfluxDB{
-		Host:       *ihost,
-		Port:       *iport,
-		DB:         *idb,
-		CheckLapse: config.DefaultConfig.InfluxDB.CheckLapse,
-	}
 
 	cp := config.ConfigParser{
 		Path:     *configPath,
 		AllowDNS: true,
-		Default:  &defaultConfig,
+		Default:  config.DefaultConfig,
 	}
-
-	conf, err := cp.Parse()
+	conf, err := cp.ParseAndMerge(ihost, iport, idb)
 	if err != nil {
 		log.Println("Error parsing config file:", err.Error())
 		return
