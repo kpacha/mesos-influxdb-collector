@@ -54,6 +54,7 @@ type InfluxDB struct {
 type HAProxy struct {
 	User     string
 	Password string
+	EndPoint string
 }
 
 type ConfigParser struct {

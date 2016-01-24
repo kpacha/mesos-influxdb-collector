@@ -161,6 +161,7 @@ func ExampleParseHAProxy() {
 	txtConfig := `haproxy {
 		user = "admin"
 		password = "admin"
+		endPoint = "haproxy_stats"
 	}`
 	cp := ConfigParser{}
 	c, _ := cp.ParseConfig(txtConfig)
@@ -180,5 +181,5 @@ func ExampleParseHAProxy() {
 	// &{localhost 8086 mesos 30}
 	// 30
 	// 3600
-	// &{admin admin}
+	// &{admin admin haproxy_stats}
 }
