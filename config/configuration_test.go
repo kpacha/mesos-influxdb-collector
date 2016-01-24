@@ -145,6 +145,7 @@ func ExampleParseInfluxDB() {
 	fmt.Println(c.InfluxDB)
 	fmt.Println(c.Lapse)
 	fmt.Println(c.DieAfter)
+	fmt.Println(c.HAProxy)
 	// Output:
 	// <nil>
 	// []
@@ -153,4 +154,31 @@ func ExampleParseInfluxDB() {
 	// &{influx 18086 custom 30}
 	// 30
 	// 3600
+	// <nil>
+}
+
+func ExampleParseHAProxy() {
+	txtConfig := `haproxy {
+		user = "admin"
+		password = "admin"
+	}`
+	cp := ConfigParser{}
+	c, _ := cp.ParseConfig(txtConfig)
+	fmt.Println(c.MesosDNS)
+	fmt.Println(c.Master)
+	fmt.Println(c.Slave)
+	fmt.Println(c.Marathon)
+	fmt.Println(c.InfluxDB)
+	fmt.Println(c.Lapse)
+	fmt.Println(c.DieAfter)
+	fmt.Println(c.HAProxy)
+	// Output:
+	// <nil>
+	// []
+	// []
+	// <nil>
+	// &{localhost 8086 mesos 30}
+	// 30
+	// 3600
+	// &{admin admin}
 }

@@ -15,6 +15,7 @@ type Config struct {
 	InfluxDB *InfluxDB
 	Lapse    int
 	DieAfter int
+	HAProxy  *HAProxy
 }
 
 type MesosDNS struct {
@@ -48,6 +49,11 @@ type InfluxDB struct {
 	Port       int
 	DB         string
 	CheckLapse int
+}
+
+type HAProxy struct {
+	User     string
+	Password string
 }
 
 type ConfigParser struct {
