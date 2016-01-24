@@ -45,11 +45,26 @@ func NewMesosMasterCollector(host string, port int, leader bool) Collector {
 }
 
 func NewMesosSlaveCollector(host string, port int) Collector {
+	return NewMultiCollector([]Collector{
+		NewMesosSlaveMainCollector(host, port),
+		NewMesosSlaveStatsCollector(host, port),
+	})
+}
+
+func NewMesosSlaveMainCollector(host string, port int) Collector {
 	u, err := url.Parse(fmt.Sprintf("http://%s:%d/metrics/snapshot", host, port))
 	if err != nil {
 		log.Fatal("Error building the mesos slave collector:", err)
 	}
 	return UrlCollector{Url: u.String(), Parser: mesos.SlaveParser{Node: host}}
+}
+
+func NewMesosSlaveStatsCollector(host string, port int) Collector {
+	u, err := url.Parse(fmt.Sprintf("http://%s:%d/monitor/statistics", host, port))
+	if err != nil {
+		log.Fatal("Error building the mesos slave stats collector:", err)
+	}
+	return UrlCollector{Url: u.String(), Parser: mesos.SlaveStatsParser{Node: host}}
 }
 
 func NewMarathonCollectors(configuration *config.Marathon) []Collector {
