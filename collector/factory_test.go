@@ -33,5 +33,5 @@ func ExampleCollectorFromConfig() {
 	fmt.Println(collector)
 
 	// Output:
-	// {[{http://localhost:5050/metrics/snapshot {localhost true}} {http://localhost:15050/metrics/snapshot {localhost false}} {[{http://localhost:5051/metrics/snapshot {localhost}} {http://localhost:5051/monitor/statistics {localhost}}]} {[{http://localhost:5052/metrics/snapshot {localhost}} {http://localhost:5052/monitor/statistics {localhost}}]}]}
+	// {[{http://localhost:5050/metrics/snapshot {localhost true} <nil> <nil>} {http://localhost:15050/metrics/snapshot {localhost false} <nil> <nil>} {[{http://localhost:5051/metrics/snapshot {localhost} <nil> <nil>} {http://localhost:5051/monitor/statistics {localhost} <nil> <nil>}]} {[{http://localhost:5052/metrics/snapshot {localhost} <nil> <nil>} {http://localhost:5052/monitor/statistics {localhost} <nil> <nil>}]}]}
 }

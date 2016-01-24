@@ -1,10 +1,11 @@
 package collector
 
 import (
-	"github.com/kpacha/mesos-influxdb-collector/parser"
-	"github.com/kpacha/mesos-influxdb-collector/store"
 	"log"
 	"net/http"
+
+	"github.com/kpacha/mesos-influxdb-collector/parser"
+	"github.com/kpacha/mesos-influxdb-collector/store"
 )
 
 type Collector interface {
@@ -29,12 +30,23 @@ func (mc MultiCollector) Collect() ([]store.Point, error) {
 }
 
 type UrlCollector struct {
-	Url    string
-	Parser parser.Parser
+	Url      string
+	Parser   parser.Parser
+	User     *string
+	Password *string
 }
 
 func (uc UrlCollector) Collect() ([]store.Point, error) {
-	r, err := http.Get(uc.Url)
+	req, err := http.NewRequest("GET", uc.Url, nil)
+	if err != nil {
+		log.Println("Error building request to", uc.Url)
+		return []store.Point{}, err
+	}
+	if uc.User != nil && uc.Password != nil {
+		req.SetBasicAuth(*uc.User, *uc.Password)
+	}
+	client := &http.Client{}
+	r, err := client.Do(req)
 	if err != nil {
 		log.Println("Error connecting to", uc.Url)
 		return []store.Point{}, err
