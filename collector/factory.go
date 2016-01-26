@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/kpacha/mesos-influxdb-collector/config"
+	"github.com/kpacha/mesos-influxdb-collector/parser/haproxy"
 	"github.com/kpacha/mesos-influxdb-collector/parser/marathon"
 	"github.com/kpacha/mesos-influxdb-collector/parser/mesos"
 )
@@ -21,6 +22,11 @@ func NewCollectorFromConfig(configuration *config.Config) Collector {
 	}
 	if configuration.Marathon != nil {
 		collectors = append(collectors, NewMarathonCollectors(configuration.Marathon)...)
+	}
+	if configuration.HAProxy != nil {
+		for _, slave := range configuration.Slave {
+			collectors = append(collectors, NewHAProxyCollector(slave.Host, configuration.HAProxy))
+		}
 	}
 
 	log.Println("Total collectors created:", len(collectors))
@@ -87,4 +93,17 @@ func NewMarathonStatsCollector(host string, port int) Collector {
 		log.Fatal("Error building the marathon collector:", err)
 	}
 	return UrlCollector{Url: u.String(), Parser: marathon.MarathonStatsParser{Node: host}}
+}
+
+func NewHAProxyCollector(host string, configuration *config.HAProxy) Collector {
+	u, err := url.Parse(fmt.Sprintf("http://%s/%s;csv", host, configuration.EndPoint))
+	if err != nil {
+		log.Fatal("Error building the HAProxy collector:", err)
+	}
+	return UrlCollector{
+		Url:      u.String(),
+		Parser:   haproxy.NewHAProxy(host),
+		User:     &configuration.User,
+		Password: &configuration.Password,
+	}
 }

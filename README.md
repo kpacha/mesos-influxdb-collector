@@ -14,8 +14,8 @@ Since this collector is intended to be deployed as a [marathon](https://mesosphe
 + Collect the marathon master stats
 + Collect the mesos executors stats
 + Collect the marathon events (experimental)
++ Collect the haproxy stats (experimental)
 + Collect the chronos task stats (TODO)
-+ Collect the haproxy stats (TODO)
 
 # Installing
 
