@@ -20,5 +20,5 @@ test:
 	go vet ./...
 
 docker:
-	docker run --rm -it -e "GOPATH=/go" -v "${PWD}:/go/src/github.com/kpacha/mesos-influxdb-collector" -w /go/src/github.com/kpacha/mesos-influxdb-collector golang:1.5.1 make
+	docker run --rm -it -e "GOPATH=/go" -v "${PWD}:/go/src/github.com/kpacha/mesos-influxdb-collector" -w /go/src/github.com/kpacha/mesos-influxdb-collector golang:1.5.3 make
 	docker build -f Dockerfile-min -t kpacha/mesos-influxdb-collector:latest-min .
