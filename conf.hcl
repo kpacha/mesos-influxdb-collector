@@ -15,3 +15,8 @@ marathon {
 }
 lapse=5
 dieAfter = 300
+haproxy {
+	user =     "admin"
+	password = "admin"
+	endPoint = "haproxy_stats"
+}
