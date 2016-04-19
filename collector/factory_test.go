@@ -6,7 +6,7 @@ import (
 	"github.com/kpacha/mesos-influxdb-collector/config"
 )
 
-func Example_CollectorFromConfig() {
+func Example_collectorFromConfig() {
 	txtConfig := `master "leader" {
 		host = "localhost"
 		port = 5050

@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func Example_ParseMaster() {
+func Example_parseMaster() {
 	txtConfig := `Master "leader" {
 		host = "localhost"
 		port = 5051
@@ -34,7 +34,7 @@ func Example_ParseMaster() {
 	// 1
 }
 
-func Example_ParseSlave() {
+func Example_parseSlave() {
 	txtConfig := `Slave "0" {
 		host = "localhost"
 		port = 5051
@@ -64,7 +64,7 @@ func Example_ParseSlave() {
 	// 1
 }
 
-func Example_ParseMarathon() {
+func Example_parseMarathon() {
 	txtConfig := `Marathon {
 		Server "0" {
 			host = "marathon1"
@@ -95,7 +95,7 @@ func Example_ParseMarathon() {
 	// 1
 }
 
-func Example_ParseMarathonWithEvents() {
+func Example_parseMarathonWithEvents() {
 	txtConfig := `Marathon {
 		events = true
 		host = "localhost"
@@ -130,7 +130,7 @@ func Example_ParseMarathonWithEvents() {
 	// 1
 }
 
-func Example_ParseInfluxDB() {
+func Example_parseInfluxDB() {
 	txtConfig := `influxdb {
 		host = "influx"
 		port = 18086
@@ -157,7 +157,7 @@ func Example_ParseInfluxDB() {
 	// <nil>
 }
 
-func Example_ParseHAProxy() {
+func Example_parseHAProxy() {
 	txtConfig := `haproxy {
 		user = "admin"
 		password = "admin"
