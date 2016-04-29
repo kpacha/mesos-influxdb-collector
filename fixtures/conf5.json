@@ -1,0 +1,19 @@
+{
+    "marathon": {
+        "server": [
+            {
+                "host": "marathon1",
+                "port": 8080
+            },
+            {
+                "host": "marathon2",
+                "port": 8080
+            }
+        ],
+        "events": true,
+        "host": "localhost",
+        "port": 8088,
+        "bufferSize": 10000
+    },
+    "dieafter": 1
+}

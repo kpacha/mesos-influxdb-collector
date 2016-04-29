@@ -1,0 +1,16 @@
+{
+    "marathon": {
+        "server": [
+            {
+                "host": "marathon1",
+                "port": 8080
+            },
+            {
+                "host": "marathon2",
+                "port": 8080
+            }
+        ]
+    },
+    "lapse": 30,
+    "dieafter": 1
+}

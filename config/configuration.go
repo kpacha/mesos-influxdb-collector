@@ -95,7 +95,7 @@ func (cp *ConfigParser) Parse() (*Config, error) {
 		return nil, fmt.Errorf("unable to decode into struct, %v", err)
 	}
 
-	c = cp.updateNestedDefaults(&c)
+	c = cp.updateNestedValues(&c)
 
 	if cp.AllowDNS && c.MesosDNS != nil {
 		if _, err := NewDNSResolver(&c); err != nil {
@@ -106,16 +106,16 @@ func (cp *ConfigParser) Parse() (*Config, error) {
 	return &c, nil
 }
 
-func (cp *ConfigParser) updateNestedDefaults(c *Config) Config {
+func (cp *ConfigParser) updateNestedValues(c *Config) Config {
 	var tmp Config
 	tmp = *c
 
-	tmp.InfluxDB.CheckLapse = cp.Cfg.GetInt("influxdb.checkLapse")
-	tmp.InfluxDB.Port = cp.Cfg.GetInt("influxdb.port")
-	tmp.InfluxDB.Host = cp.Cfg.GetString("influxdb.host")
-	tmp.InfluxDB.DB = cp.Cfg.GetString("influxdb.db")
-	tmp.InfluxDB.User = cp.Cfg.GetString("influxdb.user")
-	tmp.InfluxDB.Pass = cp.Cfg.GetString("influxdb.pass")
+	tmp.InfluxDB.CheckLapse = cp.getNestedInt("influxdb.checkLapse", DefaultInfluxdb.CheckLapse)
+	tmp.InfluxDB.Port = cp.getNestedInt("influxdb.port", DefaultInfluxdb.Port)
+	tmp.InfluxDB.Host = cp.getNestedString("influxdb.host", DefaultInfluxdb.Host)
+	tmp.InfluxDB.DB = cp.getNestedString("influxdb.db", DefaultInfluxdb.DB)
+	tmp.InfluxDB.User = cp.getNestedString("influxdb.user", DefaultInfluxdb.User)
+	tmp.InfluxDB.Pass = cp.getNestedString("influxdb.pass", DefaultInfluxdb.Pass)
 
 	if tmp.HAProxy != nil {
 		tmp.HAProxy.EndPoint = cp.Cfg.GetString("haproxy.endPoint")
@@ -126,6 +126,24 @@ func (cp *ConfigParser) updateNestedDefaults(c *Config) Config {
 
 	log.Printf("%+v\n", tmp)
 	return tmp
+}
+
+func (cp *ConfigParser) getNestedString(key, defaultValue string) string {
+	value := cp.Cfg.GetString(key)
+	if value == "" {
+		return defaultValue
+	} else {
+		return value
+	}
+}
+
+func (cp *ConfigParser) getNestedInt(key string, defaultValue int) int {
+	value := cp.Cfg.GetInt(key)
+	if value == 0 {
+		return defaultValue
+	} else {
+		return value
+	}
 }
 
 func newViper(format, path, configName string) *viper.Viper {
@@ -145,6 +163,7 @@ func newViper(format, path, configName string) *viper.Viper {
 
 	cfg.SetDefault("lapse", DefaultLapse)
 	cfg.SetDefault("dieAfter", DefaultDieAfter)
+	cfg.SetDefault("influxdb", DefaultInfluxdb)
 
 	return cfg
 }

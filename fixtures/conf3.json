@@ -1,0 +1,13 @@
+{
+    "slave": [
+        {
+            "host": "localhost",
+            "port": 5051
+        },
+        {
+            "host": "localhost",
+            "port": 5052
+        }
+    ],
+    "lapse": 100
+}

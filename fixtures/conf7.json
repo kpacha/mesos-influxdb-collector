@@ -1,0 +1,8 @@
+{
+    "haproxy": {
+        "user": "admin",
+        "password": "super_secret",
+        "port": 19090,
+        "endPoint": "haproxy_stats"
+    }
+}

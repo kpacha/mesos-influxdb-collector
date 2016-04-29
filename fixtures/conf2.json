@@ -1,0 +1,14 @@
+{
+    "master": [
+        {
+            "host": "localhost",
+            "port": 5050,
+            "leader": true
+        },
+        {
+            "host": "localhost",
+            "port": 5051
+        }
+    ],
+    "dieafter": 2
+}

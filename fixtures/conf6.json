@@ -1,0 +1,8 @@
+{
+    "influxdb": {
+        "host": "influx",
+        "port": 18086,
+        "db": "custom",
+        "checkLapse": 30
+    }
+}

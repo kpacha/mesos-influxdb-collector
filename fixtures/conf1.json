@@ -1,0 +1,25 @@
+{
+    "mesosDNS": {
+        "domain": "mesos",
+        "marathon": true,
+        "host": "slave.mesos",
+        "port": 8123
+    },
+    "marathon": {
+        "port": 8080
+    },
+    "haproxy": {
+        "user": "admin",
+        "password": "admin",
+        "port": 9090,
+        "endPoint": "haproxy?stats"
+    },
+    "lapse": 5,
+    "dieAfter": 300,
+    "influxdb": {
+        "host": "influxdb.marathon.mesos",
+        "port": 8086,
+        "db": "mesos",
+        "checkLapse": 30
+    }
+}
