@@ -32,12 +32,8 @@ func main() {
 	configPath := flag.String("c", ConfigPath, "path to the config file")
 	flag.Parse()
 
-	cp := config.ConfigParser{
-		Path:     *configPath,
-		AllowDNS: true,
-		Default:  config.DefaultConfig,
-	}
-	conf, err := cp.ParseAndMerge(ihost, iport, idb)
+	cp := config.ConfigParser{}
+	conf, err := cp.Parse()
 	if err != nil {
 		log.Println("Error parsing config file:", err.Error())
 		return

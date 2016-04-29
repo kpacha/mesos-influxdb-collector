@@ -1,10 +1,10 @@
 package config
 
 import (
-	"io/ioutil"
-	"log"
+	"fmt"
+	"strings"
 
-	"github.com/hashicorp/hcl"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -49,6 +49,8 @@ type InfluxDB struct {
 	Port       int
 	DB         string
 	CheckLapse int
+	User       string
+	Pass       string
 }
 
 type HAProxy struct {
@@ -58,83 +60,120 @@ type HAProxy struct {
 }
 
 type ConfigParser struct {
-	Path     string
-	AllowDNS bool
-	Default  *Config
+	cfg *viper.Viper
 }
 
 var (
-	EmptyString   = ""
-	EmptyInt      = -1
-	DefaultConfig = &Config{
-		InfluxDB: &InfluxDB{"localhost", 8086, "mesos", 30},
-		Lapse:    30,
-		DieAfter: 3600,
+	DefaultInfluxdb = InfluxDB{
+		Host:       "localhost",
+		DB:         "mesos",
+		Port:       8086,
+		CheckLapse: 30,
+		User:       "root",
+		Pass:       "root",
 	}
+	DefaultLapse    = 10
+	DefaultDieAfter = 3600
+	Debug           = false
 )
 
-func (cp ConfigParser) Parse() (*Config, error) {
-	return cp.ParseConfigFile(cp.Path)
+func NewConfigParser(format, path, configName string) *ConfigParser {
+	return &ConfigParser{newViper(format, path, configName)}
 }
 
-func (cp ConfigParser) ParseConfigFile(file string) (*Config, error) {
-	hclText, err := ioutil.ReadFile(file)
+func (cp *ConfigParser) Parse() (*Config, error) {
+	err := cp.cfg.ReadInConfig()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Fatal error config file: %s \n", err)
 	}
-
-	return cp.ParseConfig(string(hclText))
-}
-
-func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
-	var tmp Config
-	if cp.Default != nil {
-		tmp = *cp.Default
-	} else {
-		tmp = *DefaultConfig
-	}
-	err := cp.UpdateConfig(hclText, &tmp)
-	return &tmp, err
-}
-
-func (cp ConfigParser) UpdateConfig(hclText string, result *Config) error {
-	var tmp Config
-	tmp = *result
-	if err := hcl.Decode(&tmp, hclText); err != nil {
-		return err
-	}
-
-	if tmp.InfluxDB.CheckLapse == 0 {
-		tmp.InfluxDB.CheckLapse = DefaultConfig.InfluxDB.CheckLapse
-	}
-
-	if cp.AllowDNS && tmp.MesosDNS != nil {
-		if _, err := NewDNSResolver(&tmp); err != nil {
-			return err
-		}
-	}
-
-	log.Printf("%+v\n", tmp)
-	*result = tmp
-
-	return nil
-}
-
-func (cp ConfigParser) ParseAndMerge(ihost *string, iport *int, idb *string) (*Config, error) {
-	conf, err := cp.Parse()
+	var c Config
+	err = cp.cfg.Unmarshal(&c)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode into struct, %v", err)
 	}
-
-	if *ihost != EmptyString {
-		conf.InfluxDB.Host = *ihost
-	}
-	if *iport != EmptyInt {
-		conf.InfluxDB.Port = *iport
-	}
-	if *idb != EmptyString {
-		conf.InfluxDB.DB = *idb
-	}
-
-	return conf, nil
+	return &c, nil
 }
+
+func newViper(format, path, configName string) *viper.Viper {
+	cfg := viper.New()
+
+	if Debug {
+		cfg.Debug()
+	}
+
+	cfg.SetEnvPrefix("mic")
+	cfg.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	cfg.AutomaticEnv()
+
+	cfg.SetConfigType(format)
+	cfg.AddConfigPath(path)
+	cfg.SetConfigName(configName)
+
+	cfg.SetDefault("influxdb", DefaultInfluxdb)
+	cfg.SetDefault("lapse", DefaultLapse)
+	cfg.SetDefault("dieAfter", DefaultDieAfter)
+
+	return cfg
+}
+
+// func (cp ConfigParser) ParseConfigFile(file string) (*Config, error) {
+// 	hclText, err := ioutil.ReadFile(file)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return cp.ParseConfig(string(hclText))
+// }
+
+// func (cp ConfigParser) ParseConfig(hclText string) (*Config, error) {
+// 	var tmp Config
+// 	if cp.Default != nil {
+// 		tmp = *cp.Default
+// 	} else {
+// 		tmp = *DefaultConfig
+// 	}
+// 	err := cp.UpdateConfig(hclText, &tmp)
+// 	return &tmp, err
+// }
+
+// func (cp ConfigParser) UpdateConfig(hclText string, result *Config) error {
+// 	var tmp Config
+// 	tmp = *result
+// 	if err := hcl.Decode(&tmp, hclText); err != nil {
+// 		return err
+// 	}
+
+// 	if tmp.InfluxDB.CheckLapse == 0 {
+// 		tmp.InfluxDB.CheckLapse = DefaultConfig.InfluxDB.CheckLapse
+// 	}
+
+// 	if cp.AllowDNS && tmp.MesosDNS != nil {
+// 		if _, err := NewDNSResolver(&tmp); err != nil {
+// 			return err
+// 		}
+// 	}
+
+// 	log.Printf("%+v\n", tmp)
+// 	*result = tmp
+
+// 	return nil
+// }
+
+// func (cp ConfigParser) ParseAndMerge(ihost *string, iport *int, idb *string) (*Config, error) {
+// 	conf, err := cp.Parse()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	if *ihost != EmptyString {
+// 		conf.InfluxDB.Host = *ihost
+// 	}
+// 	if *iport != EmptyInt {
+// 		conf.InfluxDB.Port = *iport
+// 	}
+// 	if *idb != EmptyString {
+// 		conf.InfluxDB.DB = *idb
+// 	}
+
+// 	return conf, nil
+// }

@@ -3,6 +3,7 @@ all: deps build test
 deps:
 	go get -v -u github.com/hashicorp/hcl
 	go get -v -u github.com/influxdata/influxdb/client
+	go get -v -u github.com/spf13/viper
 
 gen:
 	go fmt ./...
