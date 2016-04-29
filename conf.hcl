@@ -1,13 +1,13 @@
 mesosDNS {
-	domain = "mesos"
+	domain = "ws.ideaportriga.lv"
 	marathon = true
-	host = "slave.mesos"
+	host = "mesos1.ideaportriga.lv"
 	port = 8123
 }
 influxdb {
-	host = "influxdb.marathon.mesos"
+	host = "influx.ws.ideaportriga.lv"
 	port = 8086
-	db = "mesos"
+	db = "metrics"
 	checkLapse = 30
 }
 marathon {
@@ -16,7 +16,6 @@ marathon {
 lapse=5
 dieAfter = 300
 haproxy {
-	user =     "admin"
-	password = "admin"
-	endPoint = "haproxy_stats"
+	endPoint = "haproxy?stats"
+	port = 9090
 }

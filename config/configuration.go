@@ -55,6 +55,7 @@ type HAProxy struct {
 	User     string
 	Password string
 	EndPoint string
+	Port     int
 }
 
 type ConfigParser struct {
