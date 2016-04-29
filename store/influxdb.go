@@ -25,7 +25,7 @@ type Point struct {
 func (p Point) normalize() *client.Point {
 	pt, err := client.NewPoint(p.Measurement, p.Tags, p.Fields, p.Time)
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
 	return pt
 }
@@ -59,12 +59,12 @@ func NewInfluxdb(conf InfluxdbConfig) Store {
 	u := fmt.Sprintf("http://%s:%d", conf.Host, conf.Port)
 	fmt.Println("Connecting to:", u)
 	con, err := client.NewHTTPClient(client.HTTPConfig{
-    		Addr:     u,
-    		Username: conf.Username,
-    		Password: conf.Password,
+		Addr:     u,
+		Username: conf.Username,
+		Password: conf.Password,
 	})
 	if err != nil {
-    		fmt.Println("Error creating InfluxDB Client: ", err.Error())
+		fmt.Println("Error creating InfluxDB Client: ", err.Error())
 	}
 
 	i := Influxdb{con, conf}
@@ -75,7 +75,7 @@ func NewInfluxdb(conf InfluxdbConfig) Store {
 func (i *Influxdb) report() {
 	ticker := time.NewTicker(time.Second * time.Duration(i.Config.CheckLapse))
 	for _ = range ticker.C {
-		dur, ver, err := i.Connection.Ping(10*time.Second)
+		dur, ver, err := i.Connection.Ping(10 * time.Second)
 		if err != nil {
 			log.Fatal("Error pinging the influxdb store: ", err)
 		}
@@ -84,14 +84,14 @@ func (i *Influxdb) report() {
 }
 
 func (i Influxdb) Store(points []Point) error {
-        bps, err := client.NewBatchPoints(client.BatchPointsConfig{
-                Database:  i.Config.DB,
-                Precision: "s",
-                })
-        if err != nil {
-                panic(err)
-        }
-	for _, p := range points {		
+	bps, err := client.NewBatchPoints(client.BatchPointsConfig{
+		Database:  i.Config.DB,
+		Precision: "s",
+	})
+	if err != nil {
+		panic(err)
+	}
+	for _, p := range points {
 		bps.AddPoint(p.normalize())
 	}
 	err = i.Connection.Write(bps)
