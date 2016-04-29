@@ -10,7 +10,7 @@
     }
   },
   "env": {
-    "INFLUXDB_HOST": "192.168.59.103",
+    "INFLUXDB_HOST": "192.168.59.103"
   },
   "constraints": [
     ["hostname", "UNIQUE"]
