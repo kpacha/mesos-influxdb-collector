@@ -96,7 +96,7 @@ func NewMarathonStatsCollector(host string, port int) Collector {
 }
 
 func NewHAProxyCollector(host string, configuration *config.HAProxy) Collector {
-	u, err := url.Parse(fmt.Sprintf("http://%s/%s;csv", host, configuration.EndPoint))
+	u, err := url.Parse(fmt.Sprintf("http://%s:%d/%s;csv", host, configuration.Port, configuration.EndPoint))
 	if err != nil {
 		log.Fatal("Error building the HAProxy collector:", err)
 	}

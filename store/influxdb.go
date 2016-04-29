@@ -3,10 +3,9 @@ package store
 import (
 	"fmt"
 	"log"
-	"net/url"
 	"time"
 
-	"github.com/influxdata/influxdb/client"
+	"github.com/influxdata/influxdb/client/v2"
 	"github.com/kpacha/mesos-influxdb-collector/config"
 )
 
@@ -23,15 +22,12 @@ type Point struct {
 	Raw         string
 }
 
-func (p Point) normalize() client.Point {
-	return client.Point{
-		Measurement: p.Measurement,
-		Tags:        p.Tags,
-		Time:        p.Time,
-		Fields:      p.Fields,
-		Precision:   p.Precision,
-		Raw:         p.Raw,
+func (p Point) normalize() *client.Point {
+	pt, err := client.NewPoint(p.Measurement, p.Tags, p.Fields, p.Time)
+	if err != nil {
+	    panic(err)
 	}
+	return pt
 }
 
 type InfluxdbConfig struct {
@@ -44,66 +40,60 @@ type InfluxdbConfig struct {
 }
 
 type Influxdb struct {
-	Connection *client.Client
+	Connection client.Client
 	Config     InfluxdbConfig
 }
 
-func NewInfluxdbFromConfig(conf *config.Config, user, password string) Store {
+func NewInfluxdbFromConfig(conf *config.Config) Store {
 	return NewInfluxdb(InfluxdbConfig{
 		Host:       conf.InfluxDB.Host,
 		Port:       conf.InfluxDB.Port,
 		DB:         conf.InfluxDB.DB,
-		Username:   user,
-		Password:   password,
+		Username:   conf.InfluxDB.User,
+		Password:   conf.InfluxDB.Pass,
 		CheckLapse: conf.InfluxDB.CheckLapse,
 	})
 }
 
 func NewInfluxdb(conf InfluxdbConfig) Store {
-	u, err := url.Parse(fmt.Sprintf("http://%s:%d", conf.Host, conf.Port))
+	u := fmt.Sprintf("http://%s:%d", conf.Host, conf.Port)
+	fmt.Println("Connecting to:", u)
+	con, err := client.NewHTTPClient(client.HTTPConfig{
+    		Addr:     u,
+    		Username: conf.Username,
+    		Password: conf.Password,
+	})
 	if err != nil {
-		log.Fatal("Error creating the influxdb url: ", err)
-	}
-
-	connectionConf := client.Config{
-		URL:      *u,
-		Username: conf.Username,
-		Password: conf.Password,
-	}
-
-	con, err := client.NewClient(connectionConf)
-	if err != nil {
-		log.Fatal("Error connecting to the influxdb store: ", err)
+    		fmt.Println("Error creating InfluxDB Client: ", err.Error())
 	}
 
 	i := Influxdb{con, conf}
-
 	go i.report()
-
 	return i
 }
 
 func (i *Influxdb) report() {
 	ticker := time.NewTicker(time.Second * time.Duration(i.Config.CheckLapse))
 	for _ = range ticker.C {
-		dur, ver, err := i.Connection.Ping()
+		dur, ver, err := i.Connection.Ping(10*time.Second)
 		if err != nil {
 			log.Fatal("Error pinging the influxdb store: ", err)
 		}
-		log.Printf("InfluxDb [%s] Ping: %v", ver, dur)
+		log.Printf("InfluxDb Ping[%s]: %v", ver, dur)
 	}
 }
 
 func (i Influxdb) Store(points []Point) error {
-	ps := make([]client.Point, len(points))
-	for i, p := range points {
-		ps[i] = p.normalize()
+        bps, err := client.NewBatchPoints(client.BatchPointsConfig{
+                Database:  i.Config.DB,
+                Precision: "s",
+                })
+        if err != nil {
+                panic(err)
+        }
+	for _, p := range points {		
+		bps.AddPoint(p.normalize())
 	}
-	bps := client.BatchPoints{
-		Points:          ps,
-		Database:        i.Config.DB,
-		RetentionPolicy: "default",
-	}
-	_, err := i.Connection.Write(bps)
+	err = i.Connection.Write(bps)
 	return err
 }

@@ -7,27 +7,15 @@ import (
 )
 
 func Example_collectorFromConfig() {
-	txtConfig := `master "leader" {
-		host = "localhost"
-		port = 5050
-		leader = true
-	}
-	master "follower" {
-		host = "localhost"
-		port = 15050
-	}
-	slave "0" {
-		host = "localhost"
-		port = 5051
-	}
-	slave "1" {
-		host = "localhost"
-		port = 5052
-	}`
-	cp := config.ConfigParser{}
-	c, err := cp.ParseConfig(txtConfig)
-	if err != nil {
-		fmt.Println("Error parsing the config:", err.Error())
+	c := &config.Config{
+		Master: []config.Master{
+			config.Master{Host: "localhost", Port: 5050, Leader: true},
+			config.Master{Host: "localhost", Port: 15050, Leader: false},
+		},
+		Slave: []config.Server{
+			config.Server{Host: "localhost", Port: 5051},
+			config.Server{Host: "localhost", Port: 5052},
+		},
 	}
 	collector := NewCollectorFromConfig(c)
 	fmt.Println(collector)

@@ -68,6 +68,9 @@ func (r DNSResolver) resolveMesosSlaves() error {
 }
 
 func (r DNSResolver) resolveMarathon() error {
+	if !r.Config.MesosDNS.Marathon {
+		return nil
+	}
 	instances, err := r.getARecords(r.getMarathonUrl())
 	if err != nil {
 		return err

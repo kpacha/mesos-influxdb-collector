@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/kpacha/mesos-influxdb-collector/collector"
@@ -13,26 +12,24 @@ import (
 )
 
 const (
-	ConfigPath   = "conf.hcl"
-	InfluxdbUser = "root"
-	InfluxdbPass = "root"
+	DefaultConfigPath      = "."
+	DefaultConfigFile      = "conf"
+	DefaultFormat          = "json"
+	DefaultMesosDNSEnabled = true
 
-	InfluxdbEnvName     = "INFLUXDB_HOST"
-	InfluxdbDBEnvName   = "INFLUXDB_DB"
-	InfluxdbPortEnvName = "INFLUXDB_PORT"
-	ConfigPathEnvName   = "CONFIG_FILE"
-	InfluxdbUserEnvName = "INFLUXDB_USER"
-	InfluxdbPassEnvName = "INFLUXDB_PWD"
+	FormatDBEnvName     = "FORMAT"
+	ConfigPathDBEnvName = "CONFIG_PATH"
+	ConfigFileDBEnvName = "CONFIG_FILE"
 )
 
 func main() {
-	ihost := flag.String("Ih", getStringParam(InfluxdbEnvName, config.EmptyString), "influxdb host")
-	iport := flag.Int("Ip", getIntParam(InfluxdbPortEnvName, config.EmptyInt), "influxdb port")
-	idb := flag.String("Id", getStringParam(InfluxdbDBEnvName, config.EmptyString), "influxdb database")
-	configPath := flag.String("c", ConfigPath, "path to the config file")
+	allowDNS := flag.Bool("dns", DefaultMesosDNSEnabled, "enable mesos-dns")
+	format := flag.String("f", getStringParam(FormatDBEnvName, DefaultFormat), "config format")
+	configPath := flag.String("d", getStringParam(ConfigPathDBEnvName, DefaultConfigPath), "path to the config folder")
+	configFile := flag.String("c", getStringParam(ConfigFileDBEnvName, DefaultConfigFile), "name of the config file")
 	flag.Parse()
 
-	cp := config.ConfigParser{}
+	cp := config.NewConfigParser(*format, *configPath, *configFile, *allowDNS)
 	conf, err := cp.Parse()
 	if err != nil {
 		log.Println("Error parsing config file:", err.Error())
@@ -40,10 +37,7 @@ func main() {
 	}
 	col := collector.NewCollectorFromConfig(conf)
 
-	influxdb := store.NewInfluxdbFromConfig(
-		conf,
-		getStringParam(InfluxdbUserEnvName, InfluxdbUser),
-		getStringParam(InfluxdbPassEnvName, InfluxdbPass))
+	influxdb := store.NewInfluxdbFromConfig(conf)
 
 	subscription := NewCollectorSubscription(&conf.Lapse, &col, &influxdb)
 
@@ -59,14 +53,6 @@ func main() {
 func getStringParam(envName string, defaultValue string) string {
 	env := os.Getenv(envName)
 	if env == "" {
-		return defaultValue
-	}
-	return env
-}
-
-func getIntParam(envName string, defaultValue int) int {
-	env, err := strconv.Atoi(os.Getenv(envName))
-	if err != nil {
 		return defaultValue
 	}
 	return env
