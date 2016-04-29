@@ -181,5 +181,5 @@ func Example_parseHAProxy() {
 	// &{localhost 8086 mesos 30}
 	// 30
 	// 3600
-	// &{admin admin haproxy_stats}
+	// &{admin admin haproxy_stats 0}
 }
