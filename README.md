@@ -46,7 +46,7 @@ The `mesos-influxdb-collector` is able to discover all your mesos nodes (masters
 
 # Configuration
 
-The collector implements the 12 factor app methodology, so it has several ways to be configured: environmental vars, flags & a config file:
+The collector implements the 12 factor app methodology, so it has several ways to be configured: environmental vars, flags and a config file:
 
 + The config file is where all the defaults should be placed
 + Flags could be used in order to customize the format and the path of the configuration file
@@ -224,4 +224,4 @@ Flag | EnvVar
 
 # Grafana dashboards
 
-The [fixtures/grafana]((https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures/grafana) folder contains several grafana dashboard definitions. Go to the grafana website and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
+The [fixtures/grafana](https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures/grafana) folder contains several grafana dashboard definitions. Go to the grafana website and, after configuring the influxdb datasource, import them and start monitoring your mesos cluster.
