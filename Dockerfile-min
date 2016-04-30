@@ -1,15 +1,11 @@
 FROM busybox:1.24.1
 MAINTAINER kpacha
 
-ENV INFLUXDB_HOST=influxdb
-ENV INFLUXDB_PORT=8086
-ENV INFLUXDB_DB=mesos
-ENV INFLUXDB_USER=root
-ENV INFLUXDB_PWD=root
+ENV FORMAT=json
+ENV CONFIG_PATH=/
+ENV CONFIG_FILE=conf
 
 COPY ./mesos-influxdb-collector /mesos-influxdb-collector
-COPY ./conf.hcl /conf.hcl
+COPY ./conf.json /conf.json
 
 ENTRYPOINT ["/./mesos-influxdb-collector"]
-
-CMD ["-c", "/conf.hcl"]
