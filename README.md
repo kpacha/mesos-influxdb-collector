@@ -36,6 +36,8 @@ Finally, if you love the hard way and have Go installed:
 
 ```
 $ go get github.com/kpacha/mesos-influxdb-collector
+$ cd $GOPATH/src/github.com/kpacha/mesos-influxdb-collector
+$ make
 ```
 
 # Integration with `mesos-dns`
@@ -44,15 +46,19 @@ The `mesos-influxdb-collector` is able to discover all your mesos nodes (masters
 
 # Configuration
 
-The collector use these environmental vars:
+The collector implements the 12 factor app methodology, so it has several ways to be configured: environmental vars, flags & a config file:
 
-+ `INFLUXDB_HOST`
-+ `INFLUXDB_PORT`
-+ `INFLUXDB_DB`
-+ `INFLUXDB_USER`
-+ `INFLUXDB_PWD`
++ The config file is where all the defaults should be placed
++ Flags could be used in order to customize the format and the path of the configuration file
++ Environmental variables should be use to keep the secrets away from the repository and/or the container image
 
-It also requires a config file with the list of nodes to monitor or the details about the `mesos-dns` service among these other params:
+Flags also could be passed as environmental vars:
+
++ `FORMAT`
++ `CONFIG_PATH`
++ `CONFIG_FILE`
+
+The config file should contain the list of nodes to monitor or the details about the `mesos-dns` service among these other params:
 
 + *Lapse*: time between consecutive collections. Default: 30 seconds
 + *DieAfter*: duration of the running instance. Default: 1 hour
@@ -62,12 +68,12 @@ It also requires a config file with the list of nodes to monitor or the details 
 Optional. Add it if you have a `mesos-dns` service running in your mesos cluster.
 
 ```
-mesosDNS {
-  domain = "mesos" // the domain used by the mesos-dns service
-  marathon = true // resolve marathon master
-  host = "master.mesos" // host of the mesos-dns service
-  port = 8123 // port of the REST API
-}
+   "mesosDNS":{  
+      "domain":"mesos", // the domain used by the mesos-dns service
+      "marathon":true, // resolve marathon master
+      "host":"slave.mesos", // host of the mesos-dns service
+      "port":8123 // port of the REST API
+   }
 ```
 
 ### InfluxDB
@@ -75,81 +81,79 @@ mesosDNS {
 Required.
 
 ```
-influxdb {
-  host = "influxdb.marathon.mesos" // host of the influxdb instance
-  port = 8086 // port of the REST API
-  db = "mesos" // name of the database to use
-  checkLapse = 30 // ping frequency
-}
+   "influxdb":{  
+      "host":"influxdb.marathon.mesos", // host of the influxdb instance
+      "port":8086, // port of the REST API
+      "db":"mesos", // name of the database to use
+      "checkLapse":30 // ping frequency
+   }
 ```
 
 ### Mesos masters
 
-For manual definition of some (or all) mesos masters, use the `Master` struct:
+Optional. For manual definition of some (or all) mesos masters, use the `Master` struct:
 
 ```
-master "leader" {
-  host = "master0.example.com"
-  port = 5051
-  leader = true // optional
-}
-Master "follower1" {
-  host = "master1.example.com"
-  port = 5052
-}
+    "master": [
+        {
+            "host": "localhost",
+            "port": 5050,
+            "leader": true
+        },
+        {
+            "host": "localhost",
+            "port": 5051
+        }
+    ]
 ```
 
 ### Mesos slaves
 
-For manual definition of some (or all) mesos slave, use the `Slave` struct:
+Optional. For manual definition of some (or all) mesos slave, use the `Slave` struct:
 
 ```
-Slave "0" {
-  host = "slave0.example.com"
-  port = 5051
-}
-Slave "1" {
-  host = "slave1.example.com"
-  port = 5051
-}
-Slave "2" {
-  host = "slave2.example.com"
-  port = 5051
-}
+    "slave": [
+        {
+            "host": "slave0.example.com",
+            "port": 5051
+        },
+        {
+            "host": "slave1.example.com",
+            "port": 5051
+        },
+        {
+            "host": "slave2.example.com",
+            "port": 5051
+        }
+    ]
 ```
 
 ### Marathon instances
 
-For manual definition of some (or all) marathon instances, use the `Marathon` struct:
+Optional. For manual definition of some (or all) marathon instances, use the `Marathon` struct:
 
 ```
-Marathon {
-  host = "$HOST"
-  port = 8088
-  events = true
-  bufferSize = 10000
-  Server "0" {
-    host = "marathon1"
-    port = 8080
-  }
-  Server "1" {
-    host = "marathon2"
-    port = 8080
-  }
-}
+    "marathon": {
+        "server": [
+            {
+                "host": "marathon1",
+                "port": 8080
+            },
+            {
+                "host": "marathon2",
+                "port": 8080
+            }
+        ],
+        "events": true,
+        "host": "$HOST",
+        "port": 8088,
+        "bufferSize": 10000
+    }
 ```
 
-Check [`config/configuration_test.go`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/config/configuration_test.go) and [`conf.hcl`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/conf.hcl) for examples.
+Check [`config/configuration_test.go`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/config/configuration_test.go), [`fixtures/`](https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures) and [`conf.json`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/conf.json) for examples.
 
 # Running
-
-The collector use these environmental vars:
-
-+ `INFLUXDB_DB`
-+ `INFLUXDB_HOST`
-+ `INFLUXDB_PORT`
-+ `INFLUXDB_USER`
-+ `INFLUXDB_PWD`
 
 ## Dockerized version
 
@@ -157,8 +161,6 @@ Run the container with the default params:
 
 ```
 $ docker pull --name mesos-influxdb-collector \
-    -e INFLUXDB_USER=admin \
-    -e INFLUXDB_PWD=secret \
     -it --rm kpacha/mesos-influxdb-collector
 ```
 
@@ -166,25 +168,25 @@ If you need to customize something, there are some alternatives:
 
 ### 1: Config file
 
-Just copy the `conf.hcl`, make your changes and link it as a volume:
+Just copy the `conf.json`, make your changes and link it as a volume:
 
 ```
 $ docker pull --name mesos-influxdb-collector \
-    -v /path/to/my/custom/conf.hcl:/tmp/conf.hcl \
-    -it --rm kpacha/mesos-influxdb-collector -c /tmp/conf.hcl
+    -v /path/to/my/custom/conf.json:/tmp/conf.json \
+    -it --rm kpacha/mesos-influxdb-collector -d /tmp/
 ```
 
-Tip: if you link your config file to `/go/src/github.com/kpacha/mesos-influxdb-collector/conf.hcl` you don't need to worry about that flag!
+Tip: if you link your config file to `/go/src/github.com/kpacha/mesos-influxdb-collector/conf.json` you don't need to worry about that flag!
 
 ### 2: ENV VARS
 
-Use the env vars listed above
+Override the credentials so you secrets won't be stored neither the repo nor the container image. This just works for root config values and nested fields from the HAProxy and the Influxdb sections. These envvars use the `MIC_` namespace.
 
 ```
 $ docker pull --name mesos-influxdb-collector \
-    -v /path/to/my/custom/conf.hcl:/tmp/conf.hcl \
-    -e INFLUXDB_HOST=influxdb.example.com \
-    -it --rm kpacha/mesos-influxdb-collector -c /tmp/conf.hcl
+    -e MIC_INFLUXDB_HOST=influxdb.example.com \
+    -v /path/to/my/custom/conf.json:/tmp/conf.json \
+    -it --rm kpacha/mesos-influxdb-collector -d /tmp/
 ```
 
 ### 3: Flags
@@ -194,7 +196,7 @@ Use the flags accepted by the binary and defined below. Remeber to set them as c
 ```
 $ docker pull --name mesos-influxdb-collector \
     -v /path/to/my/custom/conf.hcl:/tmp/conf.hcl \
-    -it --rm kpacha/mesos-influxdb-collector -c "/tmp/conf.hcl" -Ih "influxdb.example.com"
+    -it --rm kpacha/mesos-influxdb-collector -d /tmp/ -f hcl
 ```
 
 ## Binary version
@@ -202,25 +204,23 @@ $ docker pull --name mesos-influxdb-collector \
 ```
 $ ./mesos-influxdb-collector -h
 Usage of ./mesos-influxdb-collector:
-  -Id string
-      influxdb database (default "mesos")
-  -Ih string
-      influxdb host (default "localhost")
-  -Ip int
-      influxdb port (default 8086)
   -c string
-      path to the config file (default "conf.hcl")
+      name of the config file (default "conf")
+  -d string
+      path to the config folder (default ".")
+  -dns
+      enable mesos-dns (default true)
+  -f string
+      config format (default "json")
 ```
 
 This is the relation between those params and the environmnetal variables listed above.
 
-Flag  | EnvVar
-----  | ------
-`Id`  | `INFLUXDB_DB`
-`Ih`  | `INFLUXDB_HOST`
-`Ip`  | `INFLUXDB_PORT`
-
-The credentials for the influxdb database are accepted just as env_var (`INFLUXDB_USER` & `INFLUXDB_PWD`)
+Flag | EnvVar
+---- | ------
+`c`  | `CONFIG_FILE`
+`d`  | `CONFIG_PATH`
+`f`  | `FORMAT`
 
 # Grafana dashboards
 
