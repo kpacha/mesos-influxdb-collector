@@ -17,21 +17,24 @@ type DNSResolver struct {
 	Config *Config
 }
 
-func NewDNSResolver(config *Config) (*DNSResolver, error) {
-	resolver := DNSResolver{config}
-	if err := resolver.resolveMesosMasters(); err != nil {
+func NewDNSResolver(config *Config) *DNSResolver {
+	return &DNSResolver{config}
+}
+
+func (r DNSResolver) resolve() error {
+	if err := r.resolveMesosMasters(); err != nil {
 		log.Println("Error resolving MesosMasters")
-		return nil, err
+		return err
 	}
-	if err := resolver.resolveMesosSlaves(); err != nil {
+	if err := r.resolveMesosSlaves(); err != nil {
 		log.Println("Error resolving MesosSlaves")
-		return nil, err
+		return err
 	}
-	if err := resolver.resolveMarathon(); err != nil {
+	if err := r.resolveMarathon(); err != nil {
 		log.Println("Error resolving Marathon")
-		return nil, err
+		return err
 	}
-	return &resolver, nil
+	return nil
 }
 
 func (r DNSResolver) resolveMesosMasters() error {
@@ -74,6 +77,10 @@ func (r DNSResolver) resolveMarathon() error {
 	instances, err := r.getARecords(r.getMarathonUrl())
 	if err != nil {
 		return err
+	}
+
+	if r.Config.Marathon == nil {
+		r.Config.Marathon = &Marathon{Server: []Server{}, Events: false, Host: "", Port: 0, BufferSize: 0}
 	}
 
 	for _, instance := range instances {
