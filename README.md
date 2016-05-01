@@ -153,7 +153,7 @@ Optional. For manual definition of some (or all) marathon instances, use the `Ma
 
 ### HAProxy
 
-Optionsl. If you want to also collect the HAProxy stats, add a `haproxy` section to your config file
+Optional. If you want to also collect the HAProxy stats, add a `haproxy` section to your config file
 
 ```
    "haproxy":{  
