@@ -151,6 +151,19 @@ Optional. For manual definition of some (or all) marathon instances, use the `Ma
     }
 ```
 
+### HAProxy
+
+Optionsl. If you want to also collect the HAProxy stats, add a `haproxy` section to your config file
+
+```
+   "haproxy":{  
+      "user":"admin",
+      "password":"admin",
+      "port":9090,
+      "endPoint":"haproxy?stats"
+   }
+```
+
 Check [`config/configuration_test.go`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/config/configuration_test.go), [`fixtures/`](https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures) and [`conf.json`](https://github.com/kpacha/mesos-influxdb-collector/blob/master/conf.json) for examples.
 
 # Running
