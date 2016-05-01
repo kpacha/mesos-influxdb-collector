@@ -110,9 +110,11 @@ func (cp ConfigParser) UpdateConfig(hclText string, result *Config) error {
 	}
 
 	if cp.AllowDNS && tmp.MesosDNS != nil {
-		if _, err := NewDNSResolver(&tmp); err != nil {
+		resolver := NewDNSResolver(&tmp)
+		if err := resolver.resolve(); err != nil {
 			return err
 		}
+
 	}
 
 	log.Printf("%+v\n", tmp)

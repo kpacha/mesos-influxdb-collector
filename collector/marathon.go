@@ -9,10 +9,6 @@ import (
 	"github.com/kpacha/mesos-influxdb-collector/store"
 )
 
-type MarathonRedisteredCallbacks struct {
-	URL []string `json:"callbackUrls"`
-}
-
 type MarathonEventsCollector struct {
 	buffer chan []store.Point
 }
