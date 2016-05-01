@@ -28,8 +28,7 @@ func TestDNSResolverMesosMasters(t *testing.T) {
 	c := Config{MesosDNS: &MesosDNS{Domain: "mesos", Marathon: false, Host: host, Port: port}}
 	dnsResolver := NewDNSResolver(&c)
 	if err := dnsResolver.resolveMesosMasters(); err != nil {
-		fmt.Println("Error processing the mocked response:", err.Error())
-		t.Fail()
+		t.Fatal("Error processing the mocked response:", err.Error())
 	}
 
 	assert.Equal(t, 0, len(c.Slave), "Unexpected number of slaves")
@@ -52,8 +51,7 @@ func TestDNSResolverMesosSlaves(t *testing.T) {
 	c := Config{MesosDNS: &MesosDNS{Domain: "mesos", Marathon: false, Host: host, Port: port}}
 	dnsResolver := NewDNSResolver(&c)
 	if err := dnsResolver.resolveMesosSlaves(); err != nil {
-		fmt.Println("Error processing the mocked response:", err.Error())
-		t.Fail()
+		t.Fatal("Error processing the mocked response:", err.Error())
 	}
 
 	assert.Equal(t, 0, len(c.Master), "Unexpected number of master")
@@ -75,8 +73,7 @@ func TestDNSResolverMarathonInstances(t *testing.T) {
 	fmt.Println(c.MesosDNS)
 	dnsResolver := NewDNSResolver(&c)
 	if err := dnsResolver.resolveMarathon(); err != nil {
-		fmt.Println("Error processing the mocked response:", err.Error())
-		t.Fail()
+		t.Fatal("Error processing the mocked response:", err.Error())
 	}
 
 	assert.Equal(t, 0, len(c.Master), "Unexpected number of master")
@@ -103,8 +100,7 @@ func TestDNSResolver(t *testing.T) {
 	c := Config{MesosDNS: &MesosDNS{Domain: "mesos", Marathon: true, Host: host, Port: port}}
 	dnsResolver := NewDNSResolver(&c)
 	if err := dnsResolver.resolve(); err != nil {
-		fmt.Println("Error processing the mocked response:", err.Error())
-		t.Fail()
+		t.Fatal("Error processing the mocked response:", err.Error())
 	}
 
 	assert.Equal(t, 2, len(c.Master), "Unexpected number of masters")
