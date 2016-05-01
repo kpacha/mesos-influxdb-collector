@@ -25,7 +25,7 @@ func TestNewMarathonEventsSubscriber(t *testing.T) {
 			if strings.Contains(r.RequestURI, "callbackUrl") {
 				u, err := url.Parse(r.RequestURI)
 				if err != nil {
-					t.Fatalf("unable to parse the requested uri", err.Error())
+					t.Fatal("unable to parse the requested uri", err.Error())
 				}
 				m, _ := url.ParseQuery(u.RawQuery)
 				callbacks = append(callbacks, m["callbackUrl"][0])
