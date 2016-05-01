@@ -98,7 +98,8 @@ func (cp *ConfigParser) Parse() (*Config, error) {
 	c = cp.updateNestedValues(&c)
 
 	if cp.AllowDNS && c.MesosDNS != nil {
-		if _, err := NewDNSResolver(&c); err != nil {
+		dns := NewDNSResolver(&c)
+		if err = dns.resolve(); err != nil {
 			return nil, err
 		}
 	}
