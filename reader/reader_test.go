@@ -2,7 +2,6 @@ package reader
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -18,12 +17,10 @@ func TestReadUrl(t *testing.T) {
 
 	body, err := ReadUrl(ts.URL)
 	if err != nil {
-		log.Println("Error reading url:", err.Error())
-		t.Fail()
+		t.Fatal("Error reading url:", err.Error())
 	}
 
 	if !strings.Contains(string(body), response) {
-		log.Println("Unexpected response body", string(body))
-		t.Fail()
+		t.Fatal("Unexpected response body", string(body))
 	}
 }
