@@ -12,7 +12,7 @@ import (
 	"github.com/kpacha/mesos-influxdb-collector/store"
 )
 
-type MarathonRedisteredCallbacks struct {
+type MarathonRegisteredCallbacks struct {
 	URL []string `json:"callbackUrls"`
 }
 
@@ -69,7 +69,8 @@ func (mes MarathonEventsSubscriber) unregister() error {
 }
 
 func (mes MarathonEventsSubscriber) marathonListener(w http.ResponseWriter, r *http.Request) {
-	event, err := mes.parser.Parse(r.Body, r.RemoteAddr)
+	parts := strings.Split(r.RemoteAddr, ":")
+	event, err := mes.parser.Parse(r.Body, parts[0])
 	if err == nil {
 		mes.buffer <- event
 	}
@@ -117,13 +118,15 @@ func (mes MarathonEventsSubscriber) sendHttpRequest(method, subsEndpoint string)
 func (mes MarathonEventsSubscriber) isAlreadyRegistered(subsEndpoint string) bool {
 	resp, err := http.Get(subsEndpoint)
 	if err != nil {
-		log.Fatalf("Error retrieving event subscribers list: %s", err)
+		log.Printf("Error retrieving event subscribers list: %s\n", err)
+		return false
 	}
 	defer resp.Body.Close()
 
-	callbacks := MarathonRedisteredCallbacks{}
+	callbacks := MarathonRegisteredCallbacks{}
 	if err := json.NewDecoder(resp.Body).Decode(&callbacks); nil != err {
-		log.Fatalf("Error decoding event subscribers list: %s", err)
+		log.Printf("Error decoding event subscribers list: %s\n", err)
+		return false
 	}
 
 	for _, url := range callbacks.URL {
