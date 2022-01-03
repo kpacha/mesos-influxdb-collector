@@ -14,6 +14,8 @@ build:
 install: all do_install
 
 do_install:
+	go mod init
+	go mod tidy
 	go install
 
 test:
