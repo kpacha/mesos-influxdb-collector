@@ -1,6 +1,8 @@
 mesos-influxdb-collector
 =====
 
+**NOTICE: This repository has been archived and will not be maintained anymore. If you want to extend or modify it, please fork it and give it a new live.**
+
 Lightweight mesos stats collector for influxdb
 
 Since this collector is intended to be deployed as a [marathon](https://mesosphere.github.io/marathon) app, it comes with a *lifetime* param. This defines how long the collector will run until it dies, so marathon will re-launch it, allowing easy allocation optimizations. Check the [fixtures/marathon/](https://github.com/kpacha/mesos-influxdb-collector/tree/master/fixtures/marathon) folder for more details on how to launch it.
